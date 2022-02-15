@@ -41,7 +41,7 @@ InstallDevStuff(){
       printf "${Yellow}We're about to run the configure command - this may take a few minutes - Press enter${End}"
       read
       sudo ./configure --prefix=/usr --enable-nonfree --enable-gpl --enable-libfdk-aac --enable-libx264
-      printf "${Yellow}We're about to compile and install FFMPEG - thsi WILL take a while - Press enter${End}"
+      printf "${Yellow}We're about to compile and install FFMPEG - this WILL take a while - Press enter${End}"
       read
       sudo make install -j3
       ClearStuff
