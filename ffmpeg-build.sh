@@ -28,8 +28,8 @@ menu() {
 
     printf " ${Yellow}What would you like to do:${End}\r\n"
     echo
-    echo "   1 - Install Build Tools (We need stuff todo stuff)"
-    echo "   2 - Build/install libfdk_aac (AAC Encoder with AAC-ELD)"
+    echo "   1 - Install build tools (We need stuff todo stuff)"
+    echo "   2 - Build/install libfdk-aac (AAC Encoder with AAC-ELD)"
     echo "   3 - Build/install FFMPEG (The party piece)"
     echo "   4 - All of the above"
     echo "   5 - Delete build directories"
@@ -50,7 +50,7 @@ checkForError() {
         printf "${Red}"
         printf " ---------------------------------------------------------\r\n"
         printf " |                                                       |\r\n"
-        printf " |                   Error occurred                      |\r\n"
+        printf " |                   Errors occurred                     |\r\n"
         printf " |        Please check the logs and try again            |\r\n"
         printf " |                                                       |\r\n"
         printf " ---------------------------------------------------------\r\n"
@@ -100,7 +100,7 @@ installLibfdk() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
-    echo " |            Installing/Building Libfdk-aac             |"
+    echo " |            Installing/Building libfdk-aac             |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
@@ -258,7 +258,6 @@ processOptions() {
         menu
         ;;
     esac
-
 }
 
 # Entry Point
