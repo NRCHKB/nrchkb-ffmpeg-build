@@ -8,56 +8,63 @@ echo
 Yellow=$'\e[1;33m'
 End=$'\e[0m'
 
-printf "Question - Is this a fresh install (f) or update (u):"
+cd ~
+
+# Insert RED warning to make sure no custom build or non apt ffmpeg is installed?
+
+printf "${Yellow}Question - Is this a new install (n) or update (u):${End}"
 read Option
 
-ClearStuff(){
+Clean_directory(){
     sudo rm -rf FFmpeg
     sudo rm -rf fdk-aac
 }
 
-PreInstall(){
-    printf "${Yellow}We're about to install some build tools and static libs - Press enter${End}"
+Install_dependencies(){
+    printf "${Yellow}Install some build tools and static libs using apt - Press enter${End}"
     read
     sudo apt install -y pkg-config autoconf automake libtool libx264-dev git 
 }
 
-InstallDevStuff(){
-    printf "${Yellow}We're about to pull down and build libfdk-aac  - Press enter${End}"  
+Install_libfdk(){
+    printf "${Yellow}Downloading and installing libfdk from GitHub - Press enter${End}"
     read
+    cd ~
     git clone https://github.com/mstorsjo/fdk-aac.git
-    cd ./fdk-aac
+    cd fdk-aac
     sudo ./autogen.sh
     sudo ./configure --prefix=/usr --enable-shared --enable-static
     sudo make install -j3
     sudo ldconfig
-    cd ../
+    cd ~
 }
- InstallFFMPEG(){
-      printf "${Yellow}We're about to pull down the latest FFMPEG source - Press enter${End}"
-      read
-      git clone https://github.com/FFmpeg/FFmpeg.git
-      cd ./FFmpeg
-      printf "${Yellow}We're about to run the configure command - this may take a few minutes - Press enter${End}"
-      read
-      sudo ./configure --prefix=/usr --enable-nonfree --enable-gpl --enable-libfdk-aac --enable-libx264
-      printf "${Yellow}We're about to compile and install FFMPEG - this WILL take a while - Press enter${End}"
-      read
-      sudo make install -j3
-      ClearStuff
-      printf "${Yellow}All Done! - Enjoy${End}"
- }
+Install_FFmpeg(){
+    printf "${Yellow}Downloading FFmpeg from GitHub - Press enter${End}"
+    read
+    cd ~
+    git clone https://github.com/FFmpeg/FFmpeg.git
+    cd FFmpeg
+    printf "${Yellow}Running FFmpeg configure command - this may take a few minutes - Press enter${End}"
+    read
+    sudo ./configure --prefix=/usr --enable-nonfree --enable-gpl --enable-libfdk-aac --enable-libx264
+    printf "${Yellow}Compiling and installing FFMPEG - this WILL take a while - Press enter${End}"
+    read
+    sudo make install -j3
+    cd ~
+    Clean_directory
+    printf "${Yellow}All Done! - Enjoy${End}\n"
+}
 
-if [ "$Option" = "f" ]
+if [ "$Option" = "n" ]
  then
-   ClearStuff
-   PreInstall
-   InstallDevStuff
-   InstallFFMPEG
+   Clean_directory
+   Install_dependencies
+   Install_libfdk
+   Install_FFmpeg
 fi
 
 if [ "$Option" = "u" ]
  then
-  ClearStuff
-  InstallFFMPEG
+  Clean_directory
+  Install_FFmpeg
 fi
