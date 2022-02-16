@@ -30,10 +30,10 @@ Menu(){
     echo
     echo "   1 - Install Build Tools (We need stuff todo stuff)"
     echo "   2 - Build/install libfdk_aac (AAC Encoder with AAC-ELD)"
-    echo "   3 - Build/install libx264 (Software Renderer)"
-    echo "   4 - Build/install FFMPEG (The party peice)"
-    echo "   5 - All of the above"
-    echo "   6 - Delete build directories"
+   #echo "   3 - Build/install libx264 (Software Renderer)"
+    echo "   3 - Build/install FFMPEG (The party piece)"
+    echo "   4 - All of the above"
+    echo "   5 - Delete build directories"
     echo
     printf "   Choice: "
     read Mode
@@ -48,7 +48,7 @@ Menu(){
 # Install Dependencies
 Install_dependencies(){
     echo
-    sudo apt install -y pkg-config autoconf automake libtool git
+    sudo apt install -y pkg-config autoconf automake libtool git libx264-dev
 }
 
 # Install Libx264
@@ -188,7 +188,7 @@ Process_options(){
             Menu
         ;;
         
-        3)
+        100)
             Clean_directory
             Get_jobscount
             echo
@@ -206,11 +206,11 @@ Process_options(){
             Menu
         ;;
         
-        4)
+        3)
             Clean_directory
             Get_jobscount
             Get_omx
-            Get_x264
+            #Get_x264
             Get_fdk
             echo
             echo " ---------------------------------------------------------"
@@ -227,11 +227,11 @@ Process_options(){
             Menu
         ;;
         
-        5)
+        4)
             Clean_directory
             Get_jobscount
             Get_omx
-            Get_x264
+            #Get_x264
             Get_fdk
             echo
             echo " ---------------------------------------------------------"
@@ -249,14 +249,14 @@ Process_options(){
             echo " ---------------------------------------------------------"
             echo
             Install_libfdk
-            echo
-            echo " ---------------------------------------------------------"
-            echo " |                                                       |"
-            echo " |              Installing/Building libx264              |"
-            echo " |                                                       |"
-            echo " ---------------------------------------------------------"
-            echo
-            Install_libx264
+           #echo
+           #echo " ---------------------------------------------------------"
+           #echo " |                                                       |"
+           #echo " |              Installing/Building libx264              |"
+           #echo " |                                                       |"
+           #echo " ---------------------------------------------------------"
+           #echo
+           #Install_libx264
             echo
             echo " ---------------------------------------------------------"
             echo " |                                                       |"
@@ -272,7 +272,7 @@ Process_options(){
             Menu
         ;; 
         
-        6)
+        5)
             Clean_directory
             echo
             printf "   ${Yellow}All Done!${End}\r\n"
