@@ -58,7 +58,7 @@ Install_libx264(){
     git clone https://code.videolan.org/videolan/x264.git
     cd x264
     sudo ./configure --prefix="/usr" --enable-static --enable-pic
-    sudo make install -j$Jobs
+    sudo make -j$Jobs install
     sudo ldconfig
     cd ~
 }
@@ -71,7 +71,7 @@ Install_libfdk(){
     cd fdk-aac
     sudo ./autogen.sh
     sudo ./configure --prefix="/usr" --enable-static  --disable-shared
-    sudo make install -j$Jobs
+    sudo make -j$Jobs install
     sudo ldconfig
     cd ~
 }
@@ -104,7 +104,7 @@ Install_FFmpeg(){
     fi
     
     sudo ./configure $CMD
-    sudo make install -j$Jobs
+    sudo make -j$Jobs install
     cd ~
 }
 
