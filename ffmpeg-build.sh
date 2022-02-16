@@ -136,15 +136,16 @@ installFFmpeg() {
     git clone https://github.com/FFmpeg/FFmpeg.git
     cd FFmpeg
 
-    CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay"
+    CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
     fi
 
-    if [[ "$X264" = "y" ]]; then
-        CMD="$CMD --enable-libx264"
-    fi
+
+    #if [[ "$X264" = "y" ]]; then
+    #    CMD="$CMD --enable-libx264"
+    #fi
 
     if [[ "$OMX" = "y" ]]; then
         CMD="$CMD --enable-mmal"
