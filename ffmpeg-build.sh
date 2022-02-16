@@ -1,76 +1,290 @@
 #!/bin/bash
 
-echo "----------------------------------------------"
-echo "|           P&M FFMPEG Build Script          |"
-echo "----------------------------------------------"
-echo
-
+# Colors
+Red=$'\e[0;31m'
 Yellow=$'\e[1;33m'
 End=$'\e[0m'
 
-cd ~
-
-# Insert RED warning to make sure no custom build or non apt ffmpeg is installed?
-
-printf "${Yellow}Question - Is this a new install (n) or update (u):${End}"
-read Option
-
-Clean_directory(){
-    sudo rm -rf FFmpeg
-    sudo rm -rf fdk-aac
+# Print Header
+Print_header(){
+    
+    printf "\033c"
+    echo
+    echo " ---------------------------------------------------------"
+    echo " |                                                       |"
+    echo " |               P&M FFMPEG Build Script                 |"
+    echo " |     An FFMPEG build & installation utility NRCHKB     |"
+    echo " |                                                       |"
+    echo " ---------------------------------------------------------"
+    echo
+    
+    printf " ${Red}Note: This script will install into /usr/bin and /usr/lib respectively.${End}\r\n"
+    echo
+    
 }
 
+# Print Menu
+Menu(){
+    
+    printf " ${Yellow}What would you like to do:${End}\r\n"
+    echo
+    echo "   1 - Install Build Tools (We need stuff todo stuff)"
+    echo "   2 - Build/install libfdk_aac (AAC Encoder with AAC-ELD)"
+    echo "   3 - Build/install libx264 (Software Renderer)"
+    echo "   4 - Build/install FFMPEG (The party peice)"
+    echo "   5 - All of the above"
+    echo "   6 - Delete build directories"
+    echo
+    printf "   Choice: "
+    read Mode
+    if [[ $Mode -gt 5 || $Mode -lt 1 ]]
+    then
+        Print_header
+        Menu
+    fi
+    Process_options $Mode
+}
+
+# Install Dependencies
 Install_dependencies(){
-    printf "${Yellow}Press enter to install some build tools and static libs using apt${End}"
-    read
-    sudo apt install -y pkg-config autoconf automake libtool libx264-dev git 
+    echo
+    sudo apt install -y pkg-config autoconf automake libtool git
 }
 
-Install_libfdk(){
-    printf "${Yellow}Press enter to download and install libfdk from GitHub${End}"
-    read
+# Install Libx264
+Install_libx264(){
     cd ~
-    git clone https://github.com/mstorsjo/fdk-aac.git
-    cd fdk-aac
-    sudo ./autogen.sh
-    sudo ./configure --prefix=/usr --enable-shared --enable-static
-    sudo make install -j3
+    echo
+    git clone https://code.videolan.org/videolan/x264.git
+    cd x264
+    sudo ./configure --prefix="/usr" --enable-static --enable-pic
+    sudo make install -j$Jobs
     sudo ldconfig
     cd ~
 }
-Install_FFmpeg(){
-    printf "${Yellow}Press enter to download FFmpeg from GitHub${End}"
-    read
+
+# Install Libfdk
+Install_libfdk(){
     cd ~
-    git clone https://github.com/FFmpeg/FFmpeg.git
-    cd FFmpeg
-    printf "${Yellow}Press enter to run FFmpeg configure command - this may take a few minutes${End}"
-    read
-    sudo ./configure --prefix=/usr --enable-nonfree --enable-gpl --enable-libfdk-aac --enable-libx264
-    printf "${Yellow}Press enter to compile and install FFMPEG - this WILL take a while${End}"
-    read
-    # compile FFmpeg:
-    sudo make -j3
-    # install FFmpeg:
-    sudo make install -j1
+    echo
+    git clone https://github.com/mstorsjo/fdk-aac.git
+    cd fdk-aac
+    sudo ./autogen.sh
+    sudo ./configure --prefix="/usr" --enable-static  --disable-shared
+    sudo make install -j$Jobs
+    sudo ldconfig
     cd ~
-    Clean_directory
-    # So - if which ffmpeg returns nothing then we failed.
-    # If we failed, we should not celebrate here.
-    # We should have <user> review errors.
-    printf "${Yellow}All Done! - Enjoy${End}\n"
 }
 
-if [ "$Option" = "n" ]
- then
-   Clean_directory
-   Install_dependencies
-   Install_libfdk
-   Install_FFmpeg
-fi
+# Install FFMPEG
+Install_FFmpeg(){
 
-if [ "$Option" = "u" ]
- then
-  Clean_directory
-  Install_FFmpeg
-fi
+    cd ~
+    echo
+    git clone https://github.com/FFmpeg/FFmpeg.git
+    cd FFmpeg
+    
+    CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay"
+    
+    if [[ "$FDK" = "y" ]]
+    then
+        CMD="$CMD --enable-libfdk-aac"
+    fi
+    
+    if [[ "$X264" = "y" ]]
+    then
+        CMD="$CMD --enable-libx264"
+    fi
+    
+    if [[ "$OMX" = "y" ]]
+    then
+        CMD="$CMD --enable-mmal"
+        CMD="$CMD --enable-omx"
+        CMD="$CMD --enable-omx-rpi"
+    fi
+    
+    sudo ./configure $CMD
+    sudo make install -j$Jobs
+    cd ~
+}
+
+# Clear Up
+Clean_directory(){
+    sudo rm -rf FFmpeg
+    sudo rm -rf fdk-aac
+    sudo rm -rf x264
+}
+
+# Ask for Threads
+Get_jobscount(){
+    echo
+    printf "   ${Yellow}How many simultaneous jobs would you like to use for the build process (1-4)\r\n"
+    printf "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
+    read Jobs
+}
+
+# Ask for omx
+Get_omx(){
+    echo
+    printf "   ${Yellow}Would you like to enable 'h264_omx' (y/n)\r\n"
+    printf "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
+    read OMX
+}
+
+# Ask for X264
+Get_x264(){
+    echo
+    printf "   ${Yellow}Would you like to enable 'libx264' (y/n)\r\n"
+    printf "   Note: You will need to have built or install libx264-dev from your OS's repository\r\n"
+    printf "         If you chose option 5 - you can enable this lib:${End} "
+    read X264
+}
+
+# Ask for FDK
+Get_fdk(){
+    echo
+    printf "   ${Yellow}Would you like to enable 'libfdk-aac' (y/n)\r\n"
+    printf "   Note: You will need to have built or install libfdk-aac-dev from your OS's repository\r\n"
+    printf "         If you chose option 5 - you can enable this lib:${End} "
+    read FDK
+}
+
+# Command Processor
+Process_options(){
+    
+    case $1 in
+        
+        1)
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |               Installing Dependencies                 |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_dependencies
+            echo
+            printf "   ${Yellow}All Done!${End}\r\n"
+            read
+            Print_header
+            Menu
+        ;;
+        
+        2)
+            Clean_directory
+            Get_jobscount
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |            Installing/Building Libfdk-aac             |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_libfdk
+            echo
+            printf "   ${Yellow}All Done!${End}\r\n"
+            read
+            Print_header
+            Menu
+        ;;
+        
+        3)
+            Clean_directory
+            Get_jobscount
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |              Installing/Building libx264              |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_libx264
+            echo
+            printf "   ${Yellow}All Done!${End}\r\n"
+            read
+            Print_header
+            Menu
+        ;;
+        
+        4)
+            Clean_directory
+            Get_jobscount
+            Get_omx
+            Get_x264
+            Get_fdk
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |              Installing/Building ffmpeg               |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_FFmpeg
+            echo
+            printf "   ${Yellow}All Done!${End}\r\n"
+            read
+            Print_header
+            Menu
+        ;;
+        
+        5)
+            Clean_directory
+            Get_jobscount
+            Get_omx
+            Get_x264
+            Get_fdk
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |               Installing Dependencies                 |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_dependencies
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |            Installing/Building Libfdk-aac             |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_libfdk
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |              Installing/Building libx264              |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_libx264
+            echo
+            echo " ---------------------------------------------------------"
+            echo " |                                                       |"
+            echo " |             Installing/Building ffmpeg                |"
+            echo " |                                                       |"
+            echo " ---------------------------------------------------------"
+            echo
+            Install_FFmpeg
+            echo
+            printf "   ${Yellow}All Done!${End}\r\n"
+            read
+            Print_header
+            Menu
+        ;; 
+        
+        6)
+            Clean_directory
+            echo
+            printf "   ${Yellow}All Done!${End}\r\n"
+            read
+            Print_header
+            Menu
+        ;;
+    esac
+    
+}
+
+# Entry Point
+cd ~
+Print_header
+Menu
