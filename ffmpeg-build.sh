@@ -33,9 +33,15 @@ menu() {
     echo "   3 - Build/install FFMPEG (The party piece)"
     echo "   4 - All of the above"
     echo "   5 - Delete build directories"
+    echo "   q - Quit"
     echo
     printf "   Choice: "
     read Mode
+
+    if [[ "$Mode" = "q" ]]; then
+        exit 0
+    fi
+
     if [[ $Mode -gt 5 || $Mode -lt 1 ]]; then
         printHeader
         menu
