@@ -13,7 +13,7 @@ printHeader() {
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
     echo " |               P&M FFMPEG Build Script                 |"
-    echo " |     An FFMPEG build & installation utility NRCHKB     |"
+    echo " |   An FFMPEG build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
