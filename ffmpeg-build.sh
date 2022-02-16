@@ -49,9 +49,14 @@ Install_FFmpeg(){
     sudo ./configure --prefix=/usr --enable-nonfree --enable-gpl --enable-libfdk-aac --enable-libx264
     printf "${Yellow}Compiling and installing FFMPEG - this WILL take a while - Press enter${End}"
     read
-    sudo make install -j3
+    # compile FFmpeg:
+    sudo make -j3
+    # install FFmpeg:
+    sudo make install -j1
     cd ~
     Clean_directory
+    # So - if which ffmpeg returns nothing then we failed.
+    # If we failed, we should not celebrate here.
     printf "${Yellow}All Done! - Enjoy${End}\n"
 }
 
