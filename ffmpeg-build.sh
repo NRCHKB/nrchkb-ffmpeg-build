@@ -6,7 +6,7 @@ Yellow=$'\e[1;33m'
 End=$'\e[0m'
 
 # Print Header
-Print_header(){
+printHeader(){
     
     printf "\033c"
     echo
@@ -23,8 +23,8 @@ Print_header(){
     
 }
 
-# Print Menu
-Menu(){
+# Print menu
+menu(){
     
     printf " ${Yellow}What would you like to do:${End}\r\n"
     echo
@@ -39,45 +39,71 @@ Menu(){
     read Mode
     if [[ $Mode -gt 5 || $Mode -lt 1 ]]
     then
-        Print_header
-        Menu
+        printHeader
+        menu
     fi
-    Process_options $Mode
+    processOptions $Mode
+}
+
+# Error Check
+checkForError(){
+    if [[ $? > 0 ]]
+    then
+        echo
+        printf "${Red}"
+        printf " ---------------------------------------------------------"
+        printf " |                                                       |"
+        printf " |                   Error occurred                      |"
+        printf " |        Please check the logs and try again            |"
+        printf " |                                                       |"
+        printf " ---------------------------------------------------------"
+        printf "${End}"
+        echo
+        exit 1
+    fi
 }
 
 # Install Dependencies
-Install_dependencies(){
+installDependencies(){
     echo
     sudo apt install -y pkg-config autoconf automake libtool git libx264-dev
 }
 
 # Install Libx264
-Install_libx264(){
+installLibx264(){
     cd ~
     echo
     git clone https://code.videolan.org/videolan/x264.git
     cd x264
     sudo ./configure --prefix="/usr" --enable-static --enable-pic
-    sudo make -j$Jobs install
+    checkForError
+    sudo make -j$Jobs
+    checkForError
+    sudo make install
+    checkForError
     sudo ldconfig
     cd ~
 }
 
 # Install Libfdk
-Install_libfdk(){
+installLibfdk(){
     cd ~
     echo
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac
     sudo ./autogen.sh
     sudo ./configure --prefix="/usr" --enable-static  --disable-shared
-    sudo make -j$Jobs install
+    checkForError
+    sudo make -j$Jobs
+    checkForError
+    sudo make install
+    checkForError
     sudo ldconfig
     cd ~
 }
 
 # Install FFMPEG
-Install_FFmpeg(){
+installFFmpeg(){
 
     cd ~
     echo
@@ -104,19 +130,23 @@ Install_FFmpeg(){
     fi
     
     sudo ./configure $CMD
-    sudo make -j$Jobs install
+    checkForError
+    sudo make -j$Jobs
+    checkForError
+    sudo make install
+    checkForError
     cd ~
 }
 
 # Clear Up
-Clean_directory(){
+cleanDirectory(){
     sudo rm -rf FFmpeg
     sudo rm -rf fdk-aac
     sudo rm -rf x264
 }
 
 # Ask for Threads
-Get_jobscount(){
+getJobscount(){
     echo
     printf "   ${Yellow}How many simultaneous jobs would you like to use for the build process (1-4)\r\n"
     printf "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
@@ -124,7 +154,7 @@ Get_jobscount(){
 }
 
 # Ask for omx
-Get_omx(){
+getOMX(){
     echo
     printf "   ${Yellow}Would you like to enable 'h264_omx' (y/n)\r\n"
     printf "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
@@ -132,7 +162,7 @@ Get_omx(){
 }
 
 # Ask for X264
-Get_x264(){
+getX264(){
     echo
     printf "   ${Yellow}Would you like to enable 'libx264' (y/n)\r\n"
     printf "   Note: You will need to have built or install libx264-dev from your OS's repository\r\n"
@@ -141,7 +171,7 @@ Get_x264(){
 }
 
 # Ask for FDK
-Get_fdk(){
+getFDK(){
     echo
     printf "   ${Yellow}Would you like to enable 'libfdk-aac' (y/n)\r\n"
     printf "   Note: You will need to have built or install libfdk-aac-dev from your OS's repository\r\n"
@@ -150,7 +180,7 @@ Get_fdk(){
 }
 
 # Command Processor
-Process_options(){
+processOptions(){
     
     case $1 in
         
@@ -162,17 +192,17 @@ Process_options(){
             echo " |                                                       |"
             echo " ---------------------------------------------------------"
             echo
-            Install_dependencies
+            installDependencies
             echo
             printf "   ${Yellow}All Done!${End}\r\n"
             read
-            Print_header
-            Menu
+            printHeader
+            menu
         ;;
         
         2)
-            Clean_directory
-            Get_jobscount
+            cleanDirectory
+            getJobscount
             echo
             echo " ---------------------------------------------------------"
             echo " |                                                       |"
@@ -180,17 +210,17 @@ Process_options(){
             echo " |                                                       |"
             echo " ---------------------------------------------------------"
             echo
-            Install_libfdk
+            installLibfdk
             echo
             printf "   ${Yellow}All Done!${End}\r\n"
             read
-            Print_header
-            Menu
+            printHeader
+            menu
         ;;
         
         #3)
-        #    Clean_directory
-        #    Get_jobscount
+        #    cleanDirectory
+        #    getJobscount
         #    echo
         #    echo " ---------------------------------------------------------"
         #    echo " |                                                       |"
@@ -198,20 +228,20 @@ Process_options(){
         #    echo " |                                                       |"
         #    echo " ---------------------------------------------------------"
         #    echo
-        #    Install_libx264
+        #    installLibx264
         #    echo
         #    printf "   ${Yellow}All Done!${End}\r\n"
         #    read
-        #    Print_header
-        #    Menu
+        #    printHeader
+        #    menu
         #;;
         
         3)
-            Clean_directory
-            Get_jobscount
-            Get_omx
-            #Get_x264
-            Get_fdk
+            cleanDirectory
+            getJobscount
+            getOMX
+            #getX264
+            getFDK
             echo
             echo " ---------------------------------------------------------"
             echo " |                                                       |"
@@ -219,20 +249,20 @@ Process_options(){
             echo " |                                                       |"
             echo " ---------------------------------------------------------"
             echo
-            Install_FFmpeg
+            installFFmpeg
             echo
             printf "   ${Yellow}All Done!${End}\r\n"
             read
-            Print_header
-            Menu
+            printHeader
+            menu
         ;;
         
         4)
-            Clean_directory
-            Get_jobscount
-            Get_omx
-            #Get_x264
-            Get_fdk
+            cleanDirectory
+            getJobscount
+            getOMX
+            #getX264
+            getFDK
             echo
             echo " ---------------------------------------------------------"
             echo " |                                                       |"
@@ -240,7 +270,7 @@ Process_options(){
             echo " |                                                       |"
             echo " ---------------------------------------------------------"
             echo
-            Install_dependencies
+            installDependencies
             echo
             echo " ---------------------------------------------------------"
             echo " |                                                       |"
@@ -248,7 +278,7 @@ Process_options(){
             echo " |                                                       |"
             echo " ---------------------------------------------------------"
             echo
-            Install_libfdk
+            installLibfdk
            #echo
            #echo " ---------------------------------------------------------"
            #echo " |                                                       |"
@@ -256,7 +286,7 @@ Process_options(){
            #echo " |                                                       |"
            #echo " ---------------------------------------------------------"
            #echo
-           #Install_libx264
+           #installLibx264
             echo
             echo " ---------------------------------------------------------"
             echo " |                                                       |"
@@ -264,21 +294,21 @@ Process_options(){
             echo " |                                                       |"
             echo " ---------------------------------------------------------"
             echo
-            Install_FFmpeg
+            installFFmpeg
             echo
             printf "   ${Yellow}All Done!${End}\r\n"
             read
-            Print_header
-            Menu
+            printHeader
+            menu
         ;; 
         
         5)
-            Clean_directory
+            cleanDirectory
             echo
             printf "   ${Yellow}All Done!${End}\r\n"
             read
-            Print_header
-            Menu
+            printHeader
+            menu
         ;;
     esac
     
@@ -286,5 +316,5 @@ Process_options(){
 
 # Entry Point
 cd ~
-Print_header
-Menu
+printHeader
+menu
