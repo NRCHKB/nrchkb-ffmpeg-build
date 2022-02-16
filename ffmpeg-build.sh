@@ -51,12 +51,12 @@ checkForError(){
     then
         echo
         printf "${Red}"
-        printf " ---------------------------------------------------------"
-        printf " |                                                       |"
-        printf " |                   Error occurred                      |"
-        printf " |        Please check the logs and try again            |"
-        printf " |                                                       |"
-        printf " ---------------------------------------------------------"
+        printf " ---------------------------------------------------------\r\n"
+        printf " |                                                       |\r\n"
+        printf " |                   Error occurred                      |\r\n"
+        printf " |        Please check the logs and try again            |\r\n"
+        printf " |                                                       |\r\n"
+        printf " ---------------------------------------------------------\r\n"
         printf "${End}"
         echo
         exit 1
