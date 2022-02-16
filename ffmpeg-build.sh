@@ -188,23 +188,23 @@ Process_options(){
             Menu
         ;;
         
-        100)
-            Clean_directory
-            Get_jobscount
-            echo
-            echo " ---------------------------------------------------------"
-            echo " |                                                       |"
-            echo " |              Installing/Building libx264              |"
-            echo " |                                                       |"
-            echo " ---------------------------------------------------------"
-            echo
-            Install_libx264
-            echo
-            printf "   ${Yellow}All Done!${End}\r\n"
-            read
-            Print_header
-            Menu
-        ;;
+        #3)
+        #    Clean_directory
+        #    Get_jobscount
+        #    echo
+        #    echo " ---------------------------------------------------------"
+        #    echo " |                                                       |"
+        #    echo " |              Installing/Building libx264              |"
+        #    echo " |                                                       |"
+        #    echo " ---------------------------------------------------------"
+        #    echo
+        #    Install_libx264
+        #    echo
+        #    printf "   ${Yellow}All Done!${End}\r\n"
+        #    read
+        #    Print_header
+        #    Menu
+        #;;
         
         3)
             Clean_directory
