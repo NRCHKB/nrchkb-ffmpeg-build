@@ -21,13 +21,13 @@ Clean_directory(){
 }
 
 Install_dependencies(){
-    printf "${Yellow}Install some build tools and static libs using apt - Press enter${End}"
+    printf "${Yellow}Press enter to install some build tools and static libs using apt${End}"
     read
     sudo apt install -y pkg-config autoconf automake libtool libx264-dev git 
 }
 
 Install_libfdk(){
-    printf "${Yellow}Downloading and installing libfdk from GitHub - Press enter${End}"
+    printf "${Yellow}Press enter to download and install libfdk from GitHub${End}"
     read
     cd ~
     git clone https://github.com/mstorsjo/fdk-aac.git
@@ -39,15 +39,15 @@ Install_libfdk(){
     cd ~
 }
 Install_FFmpeg(){
-    printf "${Yellow}Downloading FFmpeg from GitHub - Press enter${End}"
+    printf "${Yellow}Press enter to download FFmpeg from GitHub${End}"
     read
     cd ~
     git clone https://github.com/FFmpeg/FFmpeg.git
     cd FFmpeg
-    printf "${Yellow}Running FFmpeg configure command - this may take a few minutes - Press enter${End}"
+    printf "${Yellow}Press enter to run FFmpeg configure command - this may take a few minutes${End}"
     read
     sudo ./configure --prefix=/usr --enable-nonfree --enable-gpl --enable-libfdk-aac --enable-libx264
-    printf "${Yellow}Compiling and installing FFMPEG - this WILL take a while - Press enter${End}"
+    printf "${Yellow}Press enter to compile and install FFMPEG - this WILL take a while${End}"
     read
     # compile FFmpeg:
     sudo make -j3
@@ -57,6 +57,7 @@ Install_FFmpeg(){
     Clean_directory
     # So - if which ffmpeg returns nothing then we failed.
     # If we failed, we should not celebrate here.
+    # We should have <user> review errors.
     printf "${Yellow}All Done! - Enjoy${End}\n"
 }
 
