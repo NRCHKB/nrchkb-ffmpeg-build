@@ -1,8 +1,10 @@
 # ffmpeg-build-script
 
-Install on a pi ... but we need to dump that token.
+This build script, is to support the NRCHKB project.  
+in allowing a fully updatbale ffmpeg build for mulitple pi versions and OS's
+
+Copy the below and paste it in your terminal (ensure root)
 ```
-bash <(curl -sL https://raw.githubusercontent.com/marcus-j-davies/ffmpeg-build-script/main/ffmpeg-build.sh?token=GHSAT0AAAAAABJYJXK3FCXN2HCFC4GJBTWYYQMMWNQ)
+bash <(curl -sL https://raw.githubusercontent.com/marcus-j-davies/ffmpeg-build-script/main/ffmpeg-build.sh)
 ```
 
-The `bash <(` is apparently called [Process Substitution](https://tldp.org/LDP/abs/html/process-sub.html)
