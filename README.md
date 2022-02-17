@@ -17,6 +17,6 @@ Highlights
 
 Copy the below and paste it in your terminal (ensure root)
 ```
-bash <(curl -sL https://raw.githubusercontent.com/marcus-j-davies/ffmpeg-build-script/main/ffmpeg-build.sh)
+bash <(curl -sL https://raw.githubusercontent.com/marcus-j-davies/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build.sh)
 ```
 
