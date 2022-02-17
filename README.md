@@ -7,11 +7,12 @@ Highlights
 
  - FFmpeg 5.0+ (Built for your platform)
  - libfdk-aac (Built for your platform)
- - libx264 (Installed via apt)
+ - libx264 (Installed via apt, or you can build as a fallback)
  - h264_omx (legacy)
  - h264_v4l2m2m (replaces h264_omx)
 
-![image](https://user-images.githubusercontent.com/55892693/154356874-1d4a71cf-476d-4ce7-b48f-e0a40cca4968.png)
+![image](https://user-images.githubusercontent.com/55892693/154429003-4a44ded7-73b2-45ee-8319-0691fdcf7c36.png)
+
 
 
 Copy the below and paste it in your terminal (ensure root)
