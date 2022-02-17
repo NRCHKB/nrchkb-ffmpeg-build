@@ -35,7 +35,7 @@ menu() {
     echo "   6 - Cleanup build directories"
     echo "   q - Quit"
     echo
-    echo "   Choice: "
+    printf "   Choice: "
     read Mode
 
     if [[ "$Mode" = "q" ]]; then
