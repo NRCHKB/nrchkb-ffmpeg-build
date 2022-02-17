@@ -17,8 +17,7 @@ printHeader() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-
-    printf " ${Red}Note: This script will install into /usr/bin and /usr/lib respectively.${End}\r\n"
+    echo " ${Red}Note: This script will install into /usr/bin and /usr/lib respectively.${End}"
     echo
 
 }
@@ -26,23 +25,24 @@ printHeader() {
 # Print menu
 menu() {
 
-    printf " ${Yellow}What would you like to do:${End}\r\n"
+    echo " ${Yellow}What would you like to do:${End}"
     echo
     echo "   1 - Install build tools (We need stuff todo stuff)"
     echo "   2 - Build/install libfdk-aac (AAC Encoder with AAC-ELD)"
     echo "   3 - Build/install FFMPEG (The party piece)"
     echo "   4 - All of the above"
-    echo "   5 - Delete build directories"
+    echo "   5 - Build/install libx264 (Only needed if libx264-dev is not available)"
+    echo "   6 - Cleanup build directories"
     echo "   q - Quit"
     echo
-    printf "   Choice: "
+    echo "   Choice: "
     read Mode
 
     if [[ "$Mode" = "q" ]]; then
         exit 0
     fi
 
-    if [[ $Mode -gt 5 || $Mode -lt 1 ]]; then
+    if [[ $Mode > 6 || $Mode < 1 ]]; then
         printHeader
         menu
     fi
@@ -53,14 +53,14 @@ menu() {
 checkForError() {
     if [[ $? > 0 ]]; then
         echo
-        printf "${Red}"
-        printf " ---------------------------------------------------------\r\n"
-        printf " |                                                       |\r\n"
-        printf " |                   Errors occurred                     |\r\n"
-        printf " |        Please check the logs and try again            |\r\n"
-        printf " |                                                       |\r\n"
-        printf " ---------------------------------------------------------\r\n"
-        printf "${End}"
+        echo "${Red}"
+        echo " ---------------------------------------------------------"
+        echo " |                                                       |"
+        echo " |                   Errors occurred                     |"
+        echo " |        Please check the logs and try again            |"
+        echo " |                                                       |"
+        echo " ---------------------------------------------------------"
+        echo "${End}"
         echo
         exit 1
     fi
@@ -75,7 +75,7 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt install -y pkg-config autoconf automake libtool git libx264-dev
+    sudo apt install -y pkg-config autoconf automake libtool git wget libx264-dev
 }
 
 # Install Libx264
@@ -133,19 +133,15 @@ installFFmpeg() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    git clone https://github.com/FFmpeg/FFmpeg.git
-    cd FFmpeg
+    wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+    tar xjvf ffmpeg-snapshot.tar.bz2
+    cd ffmpeg
 
     CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
     fi
-
-
-    #if [[ "$X264" = "y" ]]; then
-    #    CMD="$CMD --enable-libx264"
-    #fi
 
     if [[ "$OMX" = "y" ]]; then
         CMD="$CMD --enable-mmal"
@@ -164,7 +160,7 @@ installFFmpeg() {
 
 # Clear Up
 cleanDirectory() {
-    sudo rm -rf FFmpeg
+    sudo rm -rf ffmpeg
     sudo rm -rf fdk-aac
     sudo rm -rf x264
 }
@@ -172,34 +168,25 @@ cleanDirectory() {
 # Ask for Threads
 getJobscount() {
     echo
-    printf "   ${Yellow}How many simultaneous jobs would you like to use for the build process (1-4)\r\n"
-    printf "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
+    echo "   ${Yellow}How many simultaneous jobs would you like to use for the build process (1-4)"
+    echo "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
     read Jobs
 }
 
 # Ask for omx
 getOMX() {
     echo
-    printf "   ${Yellow}Would you like to enable 'h264_omx' (y/n)\r\n"
-    printf "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
+    echo "   ${Yellow}Would you like to enable 'h264_omx' (y/n)"
+    echo "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
     read OMX
-}
-
-# Ask for X264
-getX264() {
-    echo
-    printf "   ${Yellow}Would you like to enable 'libx264' (y/n)\r\n"
-    printf "   Note: You will need to have built or install libx264-dev from your OS's repository\r\n"
-    printf "         If you chose option 4 - you can enable this lib:${End} "
-    read X264
 }
 
 # Ask for FDK
 getFDK() {
     echo
-    printf "   ${Yellow}Would you like to enable 'libfdk-aac' (y/n)\r\n"
-    printf "   Note: You will need to have built or install libfdk-aac-dev from your OS's repository\r\n"
-    printf "         If you chose option 4 - you can enable this lib:${End} "
+    echo "   ${Yellow}Would you like to enable 'libfdk-aac' (y/n)"
+    echo "   Note: You will need to have built or install libfdk-aac-dev from your OS's repository"
+    echo "         If you chose option 4 - you can enable this lib:${End} "
     read FDK
 }
 
@@ -211,7 +198,7 @@ processOptions() {
     1)
         installDependencies
         echo
-        printf "   ${Yellow}All Done!${End}\r\n"
+        echo "   ${Yellow}All Done!${End}"
         read
         printHeader
         menu
@@ -221,8 +208,9 @@ processOptions() {
         cleanDirectory
         getJobscount
         installLibfdk
+        cleanDirectory
         echo
-        printf "   ${Yellow}All Done!${End}\r\n"
+        echo "   ${Yellow}All Done!${End}"
         read
         printHeader
         menu
@@ -234,8 +222,9 @@ processOptions() {
         getOMX
         getFDK
         installFFmpeg
+        cleanDirectory
         echo
-        printf "   ${Yellow}All Done!${End}\r\n"
+        echo "   ${Yellow}All Done!${End}"
         read
         printHeader
         menu
@@ -249,8 +238,9 @@ processOptions() {
         installDependencies
         installLibfdk
         installFFmpeg
+        cleanDirectory
         echo
-        printf "   ${Yellow}All Done!${End}\r\n"
+        echo "   ${Yellow}All Done!${End}"
         read
         printHeader
         menu
@@ -258,8 +248,20 @@ processOptions() {
 
     5)
         cleanDirectory
+        getJobscount
+        installLibx264
+        cleanDirectory
         echo
-        printf "   ${Yellow}All Done!${End}\r\n"
+        echo "   ${Yellow}All Done!${End}"
+        read
+        printHeader
+        menu
+        ;;
+
+    6)
+        cleanDirectory
+        echo
+        echo "   ${Yellow}All Done!${End}"
         read
         printHeader
         menu
