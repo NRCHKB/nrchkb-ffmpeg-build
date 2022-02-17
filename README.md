@@ -12,9 +12,7 @@ Highlights
  - h264_omx (legacy)
  - h264_v4l2m2m (replaces h264_omx)
 
-![image](https://user-images.githubusercontent.com/55892693/154429003-4a44ded7-73b2-45ee-8319-0691fdcf7c36.png)
-
-
+![image](https://user-images.githubusercontent.com/55892693/154566224-ed54b348-a2f7-4624-964d-cc8dc914f528.png)
 
 Copy the below and paste it in your terminal (ensure root)
 ```
