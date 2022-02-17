@@ -41,7 +41,7 @@ menu() {
         exit 0
     fi
 
-    if [[ $Mode > 6 || $Mode < 1 ]]; then
+    if [[ $Mode > 5 || $Mode < 1 ]]; then
         printHeader
         menu
     fi
