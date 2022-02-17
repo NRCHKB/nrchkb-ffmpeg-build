@@ -134,6 +134,7 @@ installFFmpeg() {
     echo " ---------------------------------------------------------"
     echo
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+    echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
     cd ffmpeg
 
