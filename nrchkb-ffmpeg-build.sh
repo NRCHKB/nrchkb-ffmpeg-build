@@ -31,8 +31,7 @@ menu() {
     echo "   2 - Build/install libfdk-aac (AAC Encoder with AAC-ELD)"
     echo "   3 - Build/install FFMPEG (The party piece)"
     echo "   4 - All of the above"
-    echo "   5 - Build/install libx264 (Only needed if libx264-dev is not available)"
-    echo "   6 - Cleanup build directories"
+    echo "   5 - Cleanup build directories"
     echo "   q - Quit"
     echo
     printf "   Choice: "
@@ -75,7 +74,16 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt install -y pkg-config autoconf automake libtool git wget libx264-dev
+    sudo apt install -y pkg-config autoconf automake libtool git wget
+
+    LibXCheck=(sudo apt info libx264-dev)
+
+    if [[ $? > 0 ]]; then
+        installLibx264
+    else
+        sudo apt install -y libx264-dev
+    fi
+
 }
 
 # Install Libx264
@@ -169,7 +177,7 @@ cleanDirectory() {
 # Ask for Threads
 getJobscount() {
     echo
-    echo "   ${Yellow}How many simultaneous jobs would you like to use for the build process (1-4)"
+    echo "   ${Yellow}How many simultaneous jobs would you like to use for any build process (if needed) (1-4)"
     printf "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
     read Jobs
 }
@@ -197,6 +205,7 @@ processOptions() {
     case $1 in
 
     1)
+        getJobscount
         installDependencies
         echo
         echo "   ${Yellow}All Done!${End}"
@@ -206,10 +215,8 @@ processOptions() {
         ;;
 
     2)
-        cleanDirectory
         getJobscount
         installLibfdk
-        cleanDirectory
         echo
         echo "   ${Yellow}All Done!${End}"
         read
@@ -218,12 +225,10 @@ processOptions() {
         ;;
 
     3)
-        cleanDirectory
         getJobscount
         getOMX
         getFDK
         installFFmpeg
-        cleanDirectory
         echo
         echo "   ${Yellow}All Done!${End}"
         read
@@ -248,18 +253,6 @@ processOptions() {
         ;;
 
     5)
-        cleanDirectory
-        getJobscount
-        installLibx264
-        cleanDirectory
-        echo
-        echo "   ${Yellow}All Done!${End}"
-        read
-        printHeader
-        menu
-        ;;
-
-    6)
         cleanDirectory
         echo
         echo "   ${Yellow}All Done!${End}"
