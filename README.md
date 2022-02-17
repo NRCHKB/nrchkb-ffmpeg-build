@@ -8,7 +8,7 @@ Highlights
  - FFmpeg 5.0+ (Built for your platform)
  - 64Bit support
  - libfdk-aac (Built for your platform)
- - libx264 (Installed via apt, or you can build as a fallback)
+ - libx264 (Installed via apt, or will build as a fallback)
  - h264_omx (legacy)
  - h264_v4l2m2m (replaces h264_omx)
 
