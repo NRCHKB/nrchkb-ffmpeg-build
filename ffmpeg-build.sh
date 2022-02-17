@@ -134,7 +134,7 @@ installFFmpeg() {
     echo " ---------------------------------------------------------"
     echo
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
-    tar xjvf ffmpeg-snapshot.tar.bz2
+    tar xjf ffmpeg-snapshot.tar.bz2
     cd ffmpeg
 
     CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
