@@ -169,7 +169,7 @@ cleanDirectory() {
 getJobscount() {
     echo
     echo "   ${Yellow}How many simultaneous jobs would you like to use for the build process (1-4)"
-    echo "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
+    printf "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
     read Jobs
 }
 
@@ -177,7 +177,7 @@ getJobscount() {
 getOMX() {
     echo
     echo "   ${Yellow}Would you like to enable 'h264_omx' (y/n)"
-    echo "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
+    printf "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
     read OMX
 }
 
@@ -186,7 +186,7 @@ getFDK() {
     echo
     echo "   ${Yellow}Would you like to enable 'libfdk-aac' (y/n)"
     echo "   Note: You will need to have built or install libfdk-aac-dev from your OS's repository"
-    echo "         If you chose option 4 - you can enable this lib:${End} "
+    printf "         If you chose option 4 - you can enable this lib:${End} "
     read FDK
 }
 
