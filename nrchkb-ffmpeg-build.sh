@@ -82,7 +82,7 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt install -y pkg-config autoconf automake libtool git wget make g++ nasm
+    sudo apt install -y pkg-config autoconf automake libtool git wget make g++ gcc nasm
 
     LibXCheck=(sudo apt info libx264-dev)
 
