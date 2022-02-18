@@ -12,7 +12,7 @@ Highlights
  - h264_omx (32Bit only, legacy)
  - h264_v4l2m2m (replaces h264_omx)
 
-![image](./Menu.png)
+![image](./Menu1.png)
 
 Copy the below and paste it in your terminal (ensure root)
 ```
