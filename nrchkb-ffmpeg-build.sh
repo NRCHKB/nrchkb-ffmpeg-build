@@ -223,7 +223,7 @@ getJobscount() {
     echo "   The more you specify - the higher chance of CPU throttling and memory constraints"
     printf "   we recommend no more than 3 for a Pi 4 (1-4): "
     read Jobs
-    if [[ "$Jobs" != "1" && "$Jobs" != "2" && "$Jobs" != "4" ]]; then
+    if [[ $Jobs != 1 && $Jobs != 2 && $Jobs != 4 ]]; then
         Jobs=3
     fi
 }
@@ -268,6 +268,24 @@ getFlags() {
 
 }
 
+# Performance Stop Watch
+stopWatch() {
+    if [[ "$1" = "stop" ]]; then
+        endEpoch=$(date +%s)
+        endTime=$(date)
+        durationEpoch=$(expr ${endEpoch} - ${startEpoch})
+        echo
+        echo "   Start time: ${startTime}"
+        echo "   End time:   ${endTime}"
+        echo "   Duration:   ${durationEpoch} seconds"
+        echo "   Max jobs:   $Jobs"
+        echo
+    else
+        startEpoch=$(date +%s)
+        startTime=$(date)
+    fi
+}
+
 # Command Processor
 processOptions() {
 
@@ -275,17 +293,9 @@ processOptions() {
 
     1)
         getJobscount
-        startEpoch=$(date +%s)
-        startTime=$(date)
+        stopWatch "start"
         installDependencies
-        endEpoch=$(date +%s)
-        endTime=$(date)
-        durationEpoch=$( expr ${endEpoch} - ${startEpoch} )
-        echo
-        echo "   Start time: ${startTime}"
-        echo "   End time:   ${endTime}"
-        echo "   Duration:   ${durationEpoch} seconds"
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -294,17 +304,9 @@ processOptions() {
 
     2)
         getJobscount
-        startEpoch=$(date +%s)
-        startTime=$(date)
+        stopWatch "start"
         installLibfdk
-        endEpoch=$(date +%s)
-        endTime=$(date)
-        durationEpoch=$( expr ${endEpoch} - ${startEpoch} )
-        echo
-        echo "   Start time: ${startTime}"
-        echo "   End time:   ${endTime}"
-        echo "   Duration:   ${durationEpoch} seconds"
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -316,17 +318,9 @@ processOptions() {
         getOMX
         getFDK
         getFlags
-        startEpoch=$(date +%s)
-        startTime=$(date)
+        stopWatch "start"
         installFFmpeg
-        endEpoch=$(date +%s)
-        endTime=$(date)
-        durationEpoch=$( expr ${endEpoch} - ${startEpoch} )
-        echo
-        echo "   Start time: ${startTime}"
-        echo "   End time:   ${endTime}"
-        echo "   Duration:   ${durationEpoch} seconds"
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -339,22 +333,14 @@ processOptions() {
         getOMX
         getFDK
         getFlags
-        startEpoch=$(date +%s)
-        startTime=$(date)
+        stopWatch "start"
         installDependencies
         if [[ "$FDK" != "n" ]]; then
             installLibfdk
         fi
         installFFmpeg
         cleanDirectory
-        endEpoch=$(date +%s)
-        endTime=$(date)
-        durationEpoch=$( expr ${endEpoch} - ${startEpoch} )
-        echo
-        echo "   Start time: ${startTime}"
-        echo "   End time:   ${endTime}"
-        echo "   Duration:   ${durationEpoch} seconds"
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -362,17 +348,9 @@ processOptions() {
         ;;
 
     5)
-        startEpoch=$(date +%s)
-        startTime=$(date)
+        stopWatch "start"
         cleanDirectory
-        endEpoch=$(date +%s)
-        endTime=$(date)
-        durationEpoch=$( expr ${endEpoch} - ${startEpoch} )
-        echo
-        echo "   Start time: ${startTime}"
-        echo "   End time:   ${endTime}"
-        echo "   Duration:   ${durationEpoch} seconds"
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
