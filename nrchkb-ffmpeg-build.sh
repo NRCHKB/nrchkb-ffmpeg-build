@@ -197,7 +197,8 @@ getOMX() {
     echo
     echo "   ${Yellow}Would you like to enable 'h264_omx'?${End}"
     echo
-    printf "   Note: 'h264_omx' is deprecated and should not be used on new installs. If you already use it, choose yes here. Enter (y/n): "
+    echo "   Note: 'h264_omx' is deprecated and should not be used on new installs."
+    printf "   If you already use it, choose yes here. Enter (y/n): "
     read OMX
 }
 
