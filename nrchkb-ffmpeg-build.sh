@@ -183,25 +183,28 @@ cleanDirectory() {
 # Ask for Threads
 getJobscount() {
     echo
-    echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) (1-4)"
-    printf "   The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi 4. Enter (y/n): ${End} "
+    echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) (1-4)${End}"
+    echo
+    printf "   The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi 4. Enter (y/n): "
     read Jobs
 }
 
 # Ask for omx
 getOMX() {
     echo
-    echo "   ${Yellow}Would you like to enable 'h264_omx'?"
-    printf "   Note: 'h264_omx' is deprecated and should not be used on new installs. If you already use it, choose yes here. Enter (y/n): ${End} "
+    echo "   ${Yellow}Would you like to enable 'h264_omx'?${End}"
+    echo
+    printf "   Note: 'h264_omx' is deprecated and should not be used on new installs. If you already use it, choose yes here. Enter (y/n): "
     read OMX
 }
 
 # Ask for FDK
 getFDK() {
     echo
-    echo "   ${Yellow}Would you like to enable 'libfdk-aac'?"
+    echo "   ${Yellow}Would you like to enable 'libfdk-aac'?${End}"
+    echo
     echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend choosing yes here."
-    printf "   If you chose option 4 - you can enable this lib. Enter (y/n): ${End} "
+    printf "   If you chose option 4 - you can enable this lib. Enter (y/n): "
     read FDK
 }
 
