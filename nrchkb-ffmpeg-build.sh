@@ -214,7 +214,7 @@ processOptions() {
         getJobscount
         installDependencies
         echo
-        echo "   ${Yellow}All Done!${End}"
+        echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
         menu
@@ -224,7 +224,7 @@ processOptions() {
         getJobscount
         installLibfdk
         echo
-        echo "   ${Yellow}All Done!${End}"
+        echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
         menu
@@ -236,7 +236,7 @@ processOptions() {
         getFDK
         installFFmpeg
         echo
-        echo "   ${Yellow}All Done!${End}"
+        echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
         menu
@@ -252,7 +252,7 @@ processOptions() {
         installFFmpeg
         cleanDirectory
         echo
-        echo "   ${Yellow}All Done!${End}"
+        echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
         menu
@@ -261,7 +261,7 @@ processOptions() {
     5)
         cleanDirectory
         echo
-        echo "   ${Yellow}All Done!${End}"
+        echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
         menu
