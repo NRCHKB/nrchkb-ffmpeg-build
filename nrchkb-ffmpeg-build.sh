@@ -258,7 +258,7 @@ getFlags() {
         echo
         echo "   ${Yellow}Please enter your compile flags below, separated by a space${End}"
         echo
-        printf "   Example '--enable-libx265 --enable-libvorbis' : "
+        printf "   Example '--enable-libx265 --enable-libopus' : "
         read FLAGS
     fi
 
