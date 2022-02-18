@@ -1,7 +1,29 @@
 #!/bin/bash
 
-# Version 0.3
-# By Marcus and Porter
+# nrchkb-ffmpeg-build Version 0.4
+
+# MIT License
+
+# Copyright (c) 2022 Marcus Davies
+# Copyright (c) 2022 Garrett Porter
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 # Colors
 Red=$'\e[0;31m'
@@ -104,6 +126,8 @@ installLibx264() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+    sudo apt remove -y libx264-dev
+    sudo apt purge -y libx264-dev
     git clone https://code.videolan.org/videolan/x264.git
     cd x264
     sudo ./configure --prefix="/usr" --enable-static --enable-pic
@@ -126,6 +150,8 @@ installLibfdk() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+    sudo apt remove libfdk-aac-dev
+    sudo apt purge libfdk-aac-dev
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac
     sudo ./autogen.sh
@@ -149,6 +175,8 @@ installFFmpeg() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+    sudo apt remove -y ffmpeg
+    sudo apt purge -y ffmpeg
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
