@@ -188,7 +188,7 @@ getJobscount() {
     echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed)${End}"
     echo
     echo "   The more you specify - the higher chance of CPU throttling and memory constraints"
-    printf "   we recommend no more than 3 for a Pi 4 (1-4):"
+    printf "   we recommend no more than 3 for a Pi 4 (1-4): "
     read Jobs
 }
 
@@ -255,7 +255,9 @@ processOptions() {
         getOMX
         getFDK
         installDependencies
-        installLibfdk
+        if [[ "$FDK" = "y" ]]; then
+            installLibfdk
+        fi
         installFFmpeg
         cleanDirectory
         echo
