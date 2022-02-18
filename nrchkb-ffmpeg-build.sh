@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.2
+# Version 0.3
 # By Marcus and Porter
 
 # Colors
@@ -39,6 +39,8 @@ menu() {
     echo
     echo "   Note: this script will download and compile these software packages from source code."
     echo "   This will take a long time. Option 4 will take over 6 hours on a Pi Zero W."
+    echo
+    echo "   If you have previously run this script, running it again will update your software."
     echo
     printf "   Choice: "
     read Mode
