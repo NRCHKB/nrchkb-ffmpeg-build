@@ -15,8 +15,8 @@ printHeader() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
-    echo " |               P&M FFMPEG Build Script                 |"
-    echo " |   An FFMPEG build & installation utility for NRCHKB   |"
+    echo " |               P&M FFmpeg Build Script                 |"
+    echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
@@ -32,7 +32,7 @@ menu() {
     echo
     echo "   1 - Install build tools (dependencies from apt)"
     echo "   2 - Build/install libfdk-aac (AAC encoder, needed for HomeKit audio)"
-    echo "   3 - Build/install FFMPEG (video processor, builds from source)"
+    echo "   3 - Build/install FFmpeg (video processor, builds from source)"
     echo "   4 - All of the above"
     echo "   5 - Cleanup build directories"
     echo "   q - Quit"
@@ -137,13 +137,13 @@ installLibfdk() {
     cd ~
 }
 
-# Install FFMPEG
+# Install FFmpeg
 installFFmpeg() {
     cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
-    echo " |              Building/Installing ffmpeg               |"
+    echo " |              Building/Installing FFmpeg               |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
