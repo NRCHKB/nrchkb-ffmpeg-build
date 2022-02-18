@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 0.5
+# nrchkb-ffmpeg-build Version 0.6
 
 # MIT License
 
@@ -248,17 +248,17 @@ getFDK() {
 getFlags() {
 
     echo
-    echo "   ${Yellow}Would you like to add some extra FFmpeg compile flags?${End}"
+    echo "   ${Yellow}Would you like to add any extra FFmpeg compile flags?"
     echo
-    echo "   Compile flags could be to enable libx265 or the countless others"
-    printf "   Note: You're responsable for ensuring any packages, header, libary files are available on the system (y/n): "
+    echo "   ADVANCED: ${End}Compile flags could be to enable libx265 or the countless others"
+    printf "   You are responsable for ensuring any required parts are installed (y/n): "
     read FLAGSYN
 
     if [[ "$FLAGSYN" = "y" ]]; then
         echo
-        echo "   ${Yellow}Please enter your compile flags below${End}"
+        echo "   ${Yellow}Please enter your compile flags below, separated by a space${End}"
         echo
-        printf "   Example: --enable-libx265 --enable-libvorbis : "
+        printf "   Example '--enable-libx265 --enable-libvorbis' : "
         read FLAGS
     fi
 
