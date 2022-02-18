@@ -150,8 +150,8 @@ installLibfdk() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt remove libfdk-aac-dev
-    sudo apt purge libfdk-aac-dev
+    sudo apt remove -y libfdk-aac-dev
+    sudo apt purge -y libfdk-aac-dev
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac
     sudo ./autogen.sh
