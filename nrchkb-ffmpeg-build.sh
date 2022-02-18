@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 0.7
+# nrchkb-ffmpeg-build Version 0.8
 
 # MIT License
 
@@ -279,6 +279,7 @@ stopWatch() {
         echo "   End time:   ${endTime}"
         echo "   Duration:   ${durationEpoch} seconds"
         echo "   Max jobs:   $Jobs"
+        echo "   Option:     $Mode"
         echo
     else
         startEpoch=$(date +%s)
