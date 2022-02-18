@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 0.4
+# nrchkb-ffmpeg-build Version 0.5
 
 # MIT License
 
@@ -194,6 +194,10 @@ installFFmpeg() {
         CMD="$CMD --enable-omx-rpi"
     fi
 
+    if [[ "$FLAGSYN" = "y" ]]; then
+        CMD="$CMD $FLAGS"
+    fi
+
     sudo ./configure $CMD
     checkForError
     sudo make -j$Jobs
@@ -240,6 +244,26 @@ getFDK() {
     read FDK
 }
 
+# Get Compile Flags
+getFlags() {
+
+    echo
+    echo "   ${Yellow}Would you like to add some extra FFmpeg compile flags?${End}"
+    echo
+    echo "   Compile flags could be to enable libx265 or the countless others"
+    printf "   Note: You're responsable for ensuring any packages, header, libary files are available on the system (y/n): "
+    read FLAGSYN
+
+    if [[ "$FLAGSYN" = "y" ]]; then
+        echo
+        echo "   ${Yellow}Please enter your compile flags below${End}"
+        echo
+        printf "   Example: --enable-libx265 --enable-libvorbis : "
+        read FLAGS
+    fi
+
+}
+
 # Command Processor
 processOptions() {
 
@@ -269,6 +293,7 @@ processOptions() {
         getJobscount
         getOMX
         getFDK
+        getFlags
         installFFmpeg
         echo
         echo "   ${Yellow}All Done!${End} ...press enter"
@@ -282,6 +307,7 @@ processOptions() {
         getJobscount
         getOMX
         getFDK
+        getFlags
         installDependencies
         if [[ "$FDK" = "y" ]]; then
             installLibfdk
