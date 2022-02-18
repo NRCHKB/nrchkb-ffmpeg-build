@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 0.6
+# nrchkb-ffmpeg-build Version 0.7
 
 # MIT License
 
@@ -81,7 +81,7 @@ menu() {
 # Error Check
 checkForError() {
     if [[ $? > 0 ]]; then
-        echo
+        stopWatch "stop"
         echo "${Red}"
         echo " ---------------------------------------------------------"
         echo " |                                                       |"
@@ -184,7 +184,7 @@ installFFmpeg() {
 
     CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
 
-    if [[ "$FDK" = "y" ]]; then
+    if [[ "$FDK" != "n" ]]; then
         CMD="$CMD --enable-libfdk-aac"
     fi
 
@@ -212,6 +212,7 @@ cleanDirectory() {
     sudo rm -rf ffmpeg
     sudo rm -rf fdk-aac
     sudo rm -rf x264
+    sudo rm -f ffmpeg-snapshot.tar.bz2
 }
 
 # Ask for Threads
@@ -222,6 +223,9 @@ getJobscount() {
     echo "   The more you specify - the higher chance of CPU throttling and memory constraints"
     printf "   we recommend no more than 3 for a Pi 4 (1-4): "
     read Jobs
+    if [[ $Jobs != 1 && $Jobs != 2 && $Jobs != 4 ]]; then
+        Jobs=3
+    fi
 }
 
 # Ask for omx
@@ -264,6 +268,24 @@ getFlags() {
 
 }
 
+# Performance Stop Watch
+stopWatch() {
+    if [[ "$1" = "stop" ]]; then
+        endEpoch=$(date +%s)
+        endTime=$(date)
+        durationEpoch=$(expr ${endEpoch} - ${startEpoch})
+        echo
+        echo "   Start time: ${startTime}"
+        echo "   End time:   ${endTime}"
+        echo "   Duration:   ${durationEpoch} seconds"
+        echo "   Max jobs:   $Jobs"
+        echo
+    else
+        startEpoch=$(date +%s)
+        startTime=$(date)
+    fi
+}
+
 # Command Processor
 processOptions() {
 
@@ -271,8 +293,9 @@ processOptions() {
 
     1)
         getJobscount
+        stopWatch "start"
         installDependencies
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -281,8 +304,9 @@ processOptions() {
 
     2)
         getJobscount
+        stopWatch "start"
         installLibfdk
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -294,8 +318,9 @@ processOptions() {
         getOMX
         getFDK
         getFlags
+        stopWatch "start"
         installFFmpeg
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -308,13 +333,14 @@ processOptions() {
         getOMX
         getFDK
         getFlags
+        stopWatch "start"
         installDependencies
-        if [[ "$FDK" = "y" ]]; then
+        if [[ "$FDK" != "n" ]]; then
             installLibfdk
         fi
         installFFmpeg
         cleanDirectory
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
@@ -322,8 +348,9 @@ processOptions() {
         ;;
 
     5)
+        stopWatch "start"
         cleanDirectory
-        echo
+        stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
         read
         printHeader
