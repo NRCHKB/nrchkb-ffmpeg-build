@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.1
+# Version 0.2
 # By Marcus and Porter
 
 # Colors
@@ -183,9 +183,10 @@ cleanDirectory() {
 # Ask for Threads
 getJobscount() {
     echo
-    echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) (1-4)${End}"
+    echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed)${End}"
     echo
-    printf "   The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi 4. Enter (y/n): "
+    echo "   The more you specify - the higher chance of CPU throttling and memory constraints"
+    printf "   we recommend no more than 3 for a Pi 4 (1-4):"
     read Jobs
 }
 
@@ -203,8 +204,8 @@ getFDK() {
     echo
     echo "   ${Yellow}Would you like to enable 'libfdk-aac'?${End}"
     echo
-    echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend choosing yes here."
-    printf "   If you chose option 4 - you can enable this lib. Enter (y/n): "
+    echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend enabling libfdk-aac."
+    printf "   If you are running Option 4, you can enable this lib. Enter (y/n): "
     read FDK
 }
 
