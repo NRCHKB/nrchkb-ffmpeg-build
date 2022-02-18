@@ -38,7 +38,7 @@ menu() {
     echo "   q - Quit"
     echo
     echo "   Note: this script will download and compile these software packages from source code."
-    echo "   This will take a long time. Option 4 can take over 5 hours on a Pi Zero W."
+    echo "   This will take a long time. Option 4 will take over 6 hours on a Pi Zero W."
     echo
     printf "   Choice: "
     read Mode
