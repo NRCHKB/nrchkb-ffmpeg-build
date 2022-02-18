@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 0.7
+# nrchkb-ffmpeg-build Version 0.8
 
 # MIT License
 
