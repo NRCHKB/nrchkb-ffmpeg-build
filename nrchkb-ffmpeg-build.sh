@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Version 0.1
+# By Marcus and Porter
+
 # Colors
 Red=$'\e[0;31m'
 Yellow=$'\e[1;33m'
@@ -27,13 +30,15 @@ menu() {
 
     echo " ${Yellow}What would you like to do:${End}"
     echo
-    echo "   1 - Install build tools (We need stuff todo stuff)"
-    echo "   2 - Build/install libfdk-aac (AAC Encoder with AAC-ELD)"
-    echo "   3 - Build/install FFMPEG (The party piece)"
+    echo "   1 - Install build tools (dependencies from apt)"
+    echo "   2 - Build/install libfdk-aac (AAC encoder, needed for HomeKit audio)"
+    echo "   3 - Build/install FFMPEG (video processor, builds from source)"
     echo "   4 - All of the above"
     echo "   5 - Cleanup build directories"
     echo "   q - Quit"
     echo
+    echo "   Note: this script will download and compile these software packages from source code."
+    echo "   This will take a long time. Option 4 can take over 5 hours on a Pi Zero W."
     printf "   Choice: "
     read Mode
 
@@ -92,7 +97,7 @@ installLibx264() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
-    echo " |              Installing/Building libx264              |"
+    echo " |              Building/Installing libx264              |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
@@ -114,7 +119,7 @@ installLibfdk() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
-    echo " |            Installing/Building libfdk-aac             |"
+    echo " |            Building/Installing libfdk-aac             |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
@@ -137,7 +142,7 @@ installFFmpeg() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
-    echo " |              Installing/Building ffmpeg               |"
+    echo " |              Building/Installing ffmpeg               |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
@@ -177,25 +182,25 @@ cleanDirectory() {
 # Ask for Threads
 getJobscount() {
     echo
-    echo "   ${Yellow}How many simultaneous jobs would you like to use for any build process (if needed) (1-4)"
-    printf "   Note: The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi4 with 4GB :${End} "
+    echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) (1-4)"
+    printf "   The more you specify - the higher chance of CPU throttling and memory constraints - we recommend no more than 3 for a Pi 4. Enter (y/n): ${End} "
     read Jobs
 }
 
 # Ask for omx
 getOMX() {
     echo
-    echo "   ${Yellow}Would you like to enable 'h264_omx' (y/n)"
-    printf "   Note: We recommend using 'h264_v4l2m2m', as 'h264_omx' is problematic on newer OS's and 64Bit systesms:${End} "
+    echo "   ${Yellow}Would you like to enable 'h264_omx'?"
+    printf "   Note: 'h264_omx' is deprecated and should not be used on new installs. If you already use it, choose yes here. Enter (y/n): ${End} "
     read OMX
 }
 
 # Ask for FDK
 getFDK() {
     echo
-    echo "   ${Yellow}Would you like to enable 'libfdk-aac' (y/n)"
-    echo "   Note: You will need to have built or install libfdk-aac-dev from your OS's repository"
-    printf "         If you chose option 4 - you can enable this lib:${End} "
+    echo "   ${Yellow}Would you like to enable 'libfdk-aac'?"
+    echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend choosing yes here."
+    printf "   If you chose option 4 - you can enable this lib. Enter (y/n): ${End} "
     read FDK
 }
 
