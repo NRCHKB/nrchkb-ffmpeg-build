@@ -6,13 +6,15 @@ in allowing a fully updatable ffmpeg build for multiple pi versions and OS's
 Highlights
 
  - FFmpeg 5.0+ (Built for your platform)
- - 64Bit support
+ - 32 and 64 bit support
  - libfdk-aac (Built for your platform)
- - libx264 (Installed via apt, or will build as a fallback if not available)
- - h264_omx (32Bit only, legacy)
+ - libx264 (Installed via apt, or will build from source as a fallback if not available)
+ - h264_omx (32Bit only, deprecated)
  - h264_v4l2m2m (replaces h264_omx)
 
 ![image](./Menu1.png)
+
+# How to Install
 
 Copy the below and paste it in your terminal (ensure root)
 ```
