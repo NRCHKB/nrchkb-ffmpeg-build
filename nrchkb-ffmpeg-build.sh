@@ -81,7 +81,7 @@ menu() {
 # Error Check
 checkForError() {
     if [[ $? > 0 ]]; then
-        echo
+        stopWatch "stop"
         echo "${Red}"
         echo " ---------------------------------------------------------"
         echo " |                                                       |"
