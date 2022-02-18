@@ -279,6 +279,7 @@ stopWatch() {
         echo "   End time:   ${endTime}"
         echo "   Duration:   ${durationEpoch} seconds"
         echo "   Max jobs:   $Jobs"
+        echo "   Option:     $Mode"
         echo
     else
         startEpoch=$(date +%s)
