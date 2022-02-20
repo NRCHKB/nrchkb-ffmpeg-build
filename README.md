@@ -30,6 +30,6 @@ Tested systems
 Copy the below and paste it in your terminal (ensure root)
 
 ```
-bash <(curl -sL https://raw.githubusercontent.com/marcus-j-davies/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build.sh)
+bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build.sh)
 ```
 
