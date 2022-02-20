@@ -12,4 +12,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run a one-line script
-        run: bash nrchkb-ffmpeg-build.sh
+        run: printf '4\n1\nn\ny\nn' | bash nrchkb-ffmpeg-build.sh
