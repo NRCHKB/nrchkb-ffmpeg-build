@@ -21,7 +21,7 @@ Tested systems
 - Raspberry Pi 3B+ (Buster - 32Bit)
 - Raspberry Pi 4 (Buster - 32Bit)
 - Raspberry Pi 4 (Bullseye - 64Bit)
-- Intel Host (Ubuntu - 32Bit)
+- Intel Host (Ubuntu - 64Bit)
 
 ![image](./Menu1.png)
 
