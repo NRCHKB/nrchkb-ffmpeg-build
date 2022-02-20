@@ -65,22 +65,22 @@ menu() {
     echo "   If you have previously run this script, running it again will update your software."
     echo
     printf "   Choice: "
-    read Mode
+    read -r Mode
 
     if [[ "$Mode" = "q" ]]; then
         exit 0
     fi
 
-    if [[ $Mode > 5 || $Mode < 1 ]]; then
+    if [[ $Mode -gt 5 || $Mode -lt 1 ]]; then
         printHeader
         menu
     fi
-    processOptions $Mode
+    processOptions "$Mode"
 }
 
 # Error Check
 checkForError() {
-    if [[ $? > 0 ]]; then
+    if [[ $? -gt 0 ]]; then
         stopWatch "stop"
         echo "${Red}"
         echo " ---------------------------------------------------------"
@@ -108,7 +108,7 @@ installDependencies() {
 
     LibXCheck=(sudo apt info libx264-dev)
 
-    if [[ $? > 0 ]]; then
+    if [[ $? -gt 0 ]]; then
         installLibx264
     else
         sudo apt install -y libx264-dev
@@ -118,7 +118,7 @@ installDependencies() {
 
 # Install Libx264
 installLibx264() {
-    cd ~
+    cd ~ || { echo "cd failed, aborting at installLibx264:01"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -129,20 +129,20 @@ installLibx264() {
     sudo apt remove -y libx264-dev
     sudo apt purge -y libx264-dev
     git clone https://code.videolan.org/videolan/x264.git
-    cd x264
+    cd x264 || { echo "cd failed, aborting at installLibx264:02"; exit 1; }
     sudo ./configure --prefix="/usr" --enable-static --enable-pic
     checkForError
-    sudo make -j$Jobs
+    sudo make -j"$Jobs"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "cd failed, aborting at installLibx264:03"; exit 1; }
 }
 
 # Install Libfdk
 installLibfdk() {
-    cd ~
+    cd ~ || { echo "cd failed, aborting at installLibfdk:01"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -153,21 +153,21 @@ installLibfdk() {
     sudo apt remove -y libfdk-aac-dev
     sudo apt purge -y libfdk-aac-dev
     git clone https://github.com/mstorsjo/fdk-aac.git
-    cd fdk-aac
+    cd fdk-aac || { echo "cd failed, aborting at installLibfdk:02"; exit 1; }
     sudo ./autogen.sh
     sudo ./configure --prefix="/usr" --enable-static --disable-shared
     checkForError
-    sudo make -j$Jobs
+    sudo make -j"$Jobs"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "cd failed, aborting at installLibfdk:03"; exit 1; }
 }
 
 # Install FFmpeg
 installFFmpeg() {
-    cd ~
+    cd ~ || { echo "cd failed, aborting at installFFmpeg:01"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -180,7 +180,7 @@ installFFmpeg() {
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
-    cd ffmpeg
+    cd ffmpeg || { echo "cd failed, aborting at installFFmpeg:02"; exit 1; }
 
     CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
 
@@ -200,11 +200,11 @@ installFFmpeg() {
 
     sudo ./configure $CMD
     checkForError
-    sudo make -j$Jobs
+    sudo make -j"$Jobs"
     checkForError
     sudo make install
     checkForError
-    cd ~
+    cd ~ || { echo "cd failed, aborting at installFFmpeg:03"; exit 1; }
 }
 
 # Clear Up
@@ -216,13 +216,13 @@ cleanDirectory() {
 }
 
 # Ask for Threads
-getJobscount() {
+getJobsCount() {
     echo
     echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed)${End}"
     echo
     echo "   The more you specify - the higher chance of CPU throttling and memory constraints"
     printf "   we recommend no more than 3 for a Pi 4 (1-4): "
-    read Jobs
+    read -r Jobs
     if [[ $Jobs != 1 && $Jobs != 2 && $Jobs != 4 ]]; then
         Jobs=3
     fi
@@ -235,7 +235,7 @@ getOMX() {
     echo
     echo "   Note: 'h264_omx' is deprecated and should not be used on new installs."
     printf "   If you already use it, choose yes here. Enter (y/n): "
-    read OMX
+    read -r OMX
 }
 
 # Ask for FDK
@@ -245,7 +245,7 @@ getFDK() {
     echo
     echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend enabling libfdk-aac."
     printf "   If you are running Option 4, you can enable this lib. Enter (y/n): "
-    read FDK
+    read -r FDK
 }
 
 # Get Compile Flags
@@ -254,16 +254,16 @@ getFlags() {
     echo
     echo "   ${Yellow}Would you like to add any extra FFmpeg compile flags?"
     echo
-    echo "   ADVANCED: ${End}Compile flags could be to enable libx265 or the countless others"
-    printf "   You are responsable for ensuring any required parts are installed (y/n): "
-    read FLAGSYN
+    echo "   ADVANCED: ${End}Compile flags could be added to enable libx265 or the countless others"
+    printf "   You are responsible for ensuring any required parts are installed (y/n): "
+    read -r FLAGSYN
 
     if [[ "$FLAGSYN" = "y" ]]; then
         echo
         echo "   ${Yellow}Please enter your compile flags below, separated by a space${End}"
         echo
         printf "   Example '--enable-libx265 --enable-libopus' : "
-        read FLAGS
+        read -r FLAGS
     fi
 
 }
@@ -273,7 +273,7 @@ stopWatch() {
     if [[ "$1" = "stop" ]]; then
         endEpoch=$(date +%s)
         endTime=$(date)
-        durationEpoch=$(expr ${endEpoch} - ${startEpoch})
+        durationEpoch=$((endEpoch - startEpoch))
         echo
         echo "   Start time: ${startTime}"
         echo "   End time:   ${endTime}"
@@ -293,29 +293,29 @@ processOptions() {
     case $1 in
 
     1)
-        getJobscount
+        getJobsCount
         stopWatch "start"
         installDependencies
         stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
-        read
+        read -r
         printHeader
         menu
         ;;
 
     2)
-        getJobscount
+        getJobsCount
         stopWatch "start"
         installLibfdk
         stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
-        read
+        read -r
         printHeader
         menu
         ;;
 
     3)
-        getJobscount
+        getJobsCount
         getOMX
         getFDK
         getFlags
@@ -323,14 +323,14 @@ processOptions() {
         installFFmpeg
         stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
-        read
+        read -r
         printHeader
         menu
         ;;
 
     4)
         cleanDirectory
-        getJobscount
+        getJobsCount
         getOMX
         getFDK
         getFlags
@@ -343,7 +343,7 @@ processOptions() {
         cleanDirectory
         stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
-        read
+        read -r
         printHeader
         menu
         ;;
@@ -353,7 +353,7 @@ processOptions() {
         cleanDirectory
         stopWatch "stop"
         echo "   ${Yellow}All Done!${End} ...press enter"
-        read
+        read -r
         printHeader
         menu
         ;;
@@ -361,6 +361,6 @@ processOptions() {
 }
 
 # Entry Point
-cd ~
+cd ~ || { echo "cd failed, aborting"; exit 1; }
 printHeader
 menu
