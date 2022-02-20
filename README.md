@@ -1,6 +1,6 @@
 # ffmpeg-build-script
 
-This build script, is to support the NRCHKB project in allowing a fully updatable FFmpeg builds. 
+This build script, is to support the NRCHKB project in allowing fully updatable FFmpeg builds.  
 It is designed for multiple Raspberry Pi versions (arm), OS's and intel hosts.
 
 Highlights
