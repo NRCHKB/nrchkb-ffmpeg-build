@@ -8,10 +8,10 @@ End=$'\e[0m'
 printf "\033c"
 
 if [[ which apt ]]; then
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-ubuntu.sh)
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-ubuntu.sh)
 elif [[ which apk ]]; then
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-alpine.sh)
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-alpine.sh)
 else
-   echo " ${Red}Sorry! ${End}"
+   echo " ${Red}Sorry! - Your OS does not me the requirements for this script.${End}"
 fi
 
