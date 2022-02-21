@@ -43,9 +43,9 @@ Tested systems
 
 # How to Install
 
-Copy the below and paste it in your terminal (ensure root)
+Copy the below and paste it in your terminal.
 
-If your OS is Alpine, insatll these first.
+Note: If your OS is Alpine, install curl and bash first.
 ```
 apk add curl bash
 ```
