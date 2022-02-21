@@ -49,7 +49,7 @@ bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/mai
 
 Alpine
 ```
-apk add curl, bash
+apk add curl bash
 bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build-alpine.sh)
 ```
 
