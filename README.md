@@ -34,6 +34,9 @@ Tested systems
 - Alpine (64Bit)
   - ARM64
 
+- Alpine (32Bit)
+  - ARM
+
 
 
 ![image](./Menu1.png)
