@@ -42,7 +42,15 @@ Tested systems
 
 Copy the below and paste it in your terminal (ensure root)
 
+Debian, Ubuntu
 ```
 bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build.sh)
 ```
+
+Alpine
+```
+apk add curl, bash
+bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build-alpine.sh)
+```
+
 
