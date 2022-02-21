@@ -18,6 +18,7 @@ Tested systems
 - Raspberry Pi Zero W1 (Bullseye - 32Bit)
 - Raspberry Pi Zero W2 Bullseye - 64Bit)
 - Raspberry Pi 3A+ (Bullseye - 64Bit)
+- Raspberry Pi 3B (Buster - 32Bit)
 - Raspberry Pi 3B+ (Buster - 32Bit)
 - Raspberry Pi 4 (Buster - 32Bit)
 - Raspberry Pi 4 (Bullseye - 64Bit)
