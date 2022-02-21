@@ -7,9 +7,11 @@ End=$'\e[0m'
 
 printf "\033c"
 
-if [[ `which apt` ]]; then
+source cat /etc/os-release
+
+if [[ "$ID" = "ubuntu" ]]; then
    bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-ubuntu.sh)
-elif [[ `which apk` ]]; then
+if [[ "$ID" = "alpine" ]]; then
    bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-alpine.sh)
 else
    echo " ${Red}Sorry! - Your OS does not me the requirements for this script.${End}"
