@@ -15,15 +15,25 @@ Highlights
 
 Tested systems
 
-- Raspberry Pi Zero W1 (Bullseye - 32Bit)
-- Raspberry Pi Zero W2 Bullseye - 64Bit)
-- Raspberry Pi 3A+ (Bullseye - 64Bit)
-- Raspberry Pi 3B (Buster - 32Bit)
-- Raspberry Pi 3B+ (Buster - 32Bit)
-- Raspberry Pi 4 (Buster - 32Bit)
-- Raspberry Pi 4 (Bullseye - 64Bit)
-- Intel Host (Ubuntu - 64Bit)
-- Arm Host (Alpine - 64Bit)
+- Bullseye (32Bit)
+  - Raspberry Pi Zero W1
+
+- Bullseye (64Bit)
+  - Raspberry Pi Zero W2
+  - Raspberry Pi 4 
+  - Raspberry Pi 3A+ (Bullseye - 64Bit)
+
+- Buster (32Bit)
+  - Raspberry Pi 4
+  - Raspberry Pi 3B+ (Buster - 32Bit)
+  - Raspberry Pi 3B
+
+- Ubuntu (64 Bit)
+  - Intel
+
+- Alpine (64Bit)
+  - ARM64
+
 
 
 ![image](./Menu1.png)
