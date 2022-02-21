@@ -7,7 +7,7 @@ End=$'\e[0m'
 
 printf "\033c"
 
-source cat /etc/os-release
+source /etc/os-release
 
 if [[ "$ID" = "alpine" ]]; then
    bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-alpine.sh)
