@@ -21,11 +21,11 @@ Tested systems
 - Bullseye (64Bit)
   - Raspberry Pi Zero W2
   - Raspberry Pi 4 
-  - Raspberry Pi 3A+ (Bullseye - 64Bit)
+  - Raspberry Pi 3A+
 
 - Buster (32Bit)
   - Raspberry Pi 4
-  - Raspberry Pi 3B+ (Buster - 32Bit)
+  - Raspberry Pi 3B+
   - Raspberry Pi 3B
 
 - Ubuntu (64 Bit)
