@@ -1,4 +1,4 @@
-name: Test
+name: Test builds on various OS and configurations
 
 on:
   pull_request:
@@ -7,7 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  all-no-options:
+    runs-on: [self-hosted,linux]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run a one-line script
+        run: printf '4\n1\nn\nn\nn' | bash nrchkb-ffmpeg-build.sh
+  all-with-libfdk-aac:
     runs-on: [self-hosted,linux]
     steps:
       - uses: actions/checkout@v2
