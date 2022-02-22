@@ -13,6 +13,6 @@ source /etc/os-release # access denied on alpine ??
 if [[ "$ID" = "alpine" ]]; then
    bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-alpine.sh)
 else
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-ubuntu.sh)
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Alpine-Support/build-debian.sh)
 fi
 
