@@ -8,7 +8,7 @@ End=$'\e[0m'
 printf "\033c"
 
 if [[ $(which apk) ]]; then
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-alpine.sh) "$@"
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Apline-Support/build-alpine.sh) "$@"
 else
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-debian.sh) "$@"
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/Apline-Support/build-debian.sh) "$@"
 fi
