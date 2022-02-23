@@ -12,6 +12,7 @@ Highlights
 - h264_omx (32Bit only, Raspberry Pi only, deprecated)
 - h264_v4l2m2m (replaces h264_omx)
 - Ability to add extra compile flags
+- Automate with command line argumnets.
 
 Tested systems
 
