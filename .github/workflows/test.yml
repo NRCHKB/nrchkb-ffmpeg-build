@@ -11,11 +11,11 @@ jobs:
     runs-on: [self-hosted,linux]
     steps:
       - uses: actions/checkout@v2
-      - name: Run a one-line script
-        run: printf '4\n1\nn\nn\nn' | bash nrchkb-ffmpeg-build.sh
+      - name: Build
+        run: bash build-bootstrap.sh --interactive n --mode 4 --max-jobs 1 --libfdk-aac n --h264-omx n
   all-with-libfdk-aac:
     runs-on: [self-hosted,linux]
     steps:
       - uses: actions/checkout@v2
-      - name: Run a one-line script
-        run: printf '4\n1\nn\ny\nn' | bash nrchkb-ffmpeg-build.sh
+      - name: Build
+        run: bash build-bootstrap.sh --interactive n --mode 4 --max-jobs 1 --libfdk-aac y --h264-omx n

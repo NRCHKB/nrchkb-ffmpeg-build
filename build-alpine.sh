@@ -52,7 +52,7 @@ printHeader() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                   1.0 |"
-    echo " |               P&M FFmpeg Build Script                 |"
+    echo " |          P&M FFmpeg Build Script (Alpine)             |"
     echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
