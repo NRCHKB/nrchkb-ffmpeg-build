@@ -42,7 +42,6 @@ FLAGS=""         # Flasg Value
 FLAGSPARAM=false # Arg provided
 MODE=0           # Mode Value
 MODEPARAM=false  # Arg provided
-
 INTERACTIVE="y" # Interactive
 
 # Print Header
@@ -178,6 +177,13 @@ installLibfdk() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+
+    sudo apt info libfdk-aac-dev
+    if [[ $? = 0 ]]; then
+        sudo apt install -y libfdk-aac-dev
+        return
+    fi
+
     sudo apt remove -y libfdk-aac-dev
     sudo apt purge -y libfdk-aac-dev
     git clone https://github.com/mstorsjo/fdk-aac.git
@@ -499,6 +505,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ "$INTERACTIVE" = "n" ]; then
+    printHeader
     processOptions $MODE
 
 else

@@ -42,7 +42,6 @@ FLAGS=""         # Flasg Value
 FLAGSPARAM=false # Arg provided
 MODE=0           # Mode Value
 MODEPARAM=false  # Arg provided
-
 INTERACTIVE="y" # Interactive
 
 # Print Header
@@ -121,7 +120,15 @@ installDependencies() {
     echo " ---------------------------------------------------------"
     echo
     apk add pkgconfig autoconf automake libtool git wget make g++ gcc nasm yasm
-    installLibx264
+
+    apk info x264-dev
+
+    if [[ $? -gt 0 ]]; then
+        installLibx264
+    else
+        apk add x264-dev
+    fi
+
 }
 
 # Install Libx264
@@ -137,6 +144,7 @@ installLibx264() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+    apk del x264-dev
     git clone https://code.videolan.org/videolan/x264.git
     cd x264 || {
         echo "cd failed, aborting at installLibx264:02"
@@ -168,6 +176,14 @@ installLibfdk() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+
+    apk info fdk-aac-dev
+    if [[ $? = 0 ]]; then
+        apk add fdk-aac-dev
+        return
+    fi
+
+    apk del fdk-aac-dev
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac || {
         echo "cd failed, aborting at installLibfdk:02"
@@ -200,6 +216,7 @@ installFFmpeg() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
+    apk del ffmpeg
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
@@ -485,6 +502,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ "$INTERACTIVE" = "n" ]; then
+    printHeader
     processOptions $MODE
 
 else
