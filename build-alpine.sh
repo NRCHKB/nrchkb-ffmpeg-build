@@ -42,7 +42,7 @@ FLAGS=""         # Flasg Value
 FLAGSPARAM=false # Arg provided
 MODE=0           # Mode Value
 MODEPARAM=false  # Arg provided
-INTERACTIVE="y" # Interactive
+INTERACTIVE="y"  # Interactive
 
 # Print Header
 printHeader() {
@@ -336,7 +336,7 @@ getFlags() {
             echo
             printf "   Example '--enable-libx265 --enable-libopus' : "
             read -r
-            if [[ "$REPLY" != "" ]]; then
+            if [[ ${#REPLY} -gt 0 ]]; then
                 FLAGS="$REPLY"
             else
                 FLAGSYN="n"
