@@ -12,25 +12,50 @@ Highlights
 - h264_omx (32Bit only, Raspberry Pi only, deprecated)
 - h264_v4l2m2m (replaces h264_omx)
 - Ability to add extra compile flags
+- Automate with command line argumnets.
 
 Tested systems
 
-- Raspberry Pi Zero W1 (Bullseye - 32Bit)
-- Raspberry Pi Zero W2 Bullseye - 64Bit)
-- Raspberry Pi 3A+ (Bullseye - 64Bit)
-- Raspberry Pi 3B (Buster - 32Bit)
-- Raspberry Pi 3B+ (Buster - 32Bit)
-- Raspberry Pi 4 (Buster - 32Bit)
-- Raspberry Pi 4 (Bullseye - 64Bit)
-- Intel Host (Ubuntu - 64Bit)
+- Bullseye (32Bit)
+  - Raspberry Pi Zero W1
+
+- Bullseye (64Bit)
+  - Raspberry Pi Zero W2
+  - Raspberry Pi 4 
+  - Raspberry Pi 3A+
+
+- Buster (32Bit)
+  - Raspberry Pi 4
+  - Raspberry Pi 3B+
+  - Raspberry Pi 3B
+
+- Ubuntu (64 Bit)
+  - Intel
+
+- Alpine (64Bit)
+  - ARM64
+
+- Alpine (32Bit)
+  - ARM
+
+
 
 ![image](./Menu1.png)
 
 # How to Install
 
-Copy the below and paste it in your terminal (ensure root)
+Copy the below and paste it in your terminal.
+
+Note: If your OS is Alpine, install curl and bash first.
+```
+apk add curl bash
+```
+Then
 
 ```
-bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/nrchkb-ffmpeg-build.sh)
+bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-bootstrap.sh)
 ```
+
+
+
 
