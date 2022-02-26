@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 1.0
+# nrchkb-ffmpeg-build Version 1.1
 
 # MIT License
 
@@ -44,19 +44,36 @@ MODE=0           # Mode Value
 MODEPARAM=false  # Arg provided
 INTERACTIVE="y"  # Interactive
 
+# Prefix
+PREFIX="/usr/local"
+export LDFLAGS="-L$PREFIX/lib"
+export CFLAGS="-I$PREFIX/include"
+
+# Specific package manager implemention
+INSTALL() {
+    sudo apt install -y $@
+}
+REMOVE() {
+    sudo apt remove -y $1
+    sudo apt purge -y $1
+}
+CHECK() {
+    apt info $1
+}
+
 # Print Header
 printHeader() {
 
     printf "\033c"
     echo
     echo " ---------------------------------------------------------"
-    echo " |                                                   1.0 |"
+    echo " |                                                   1.1 |"
     echo " |          P&M FFmpeg Build Script (Debian)             |"
     echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    echo " ${Red}Note: This script will install into /usr/bin and /usr/lib respectively.${End}"
+    echo " ${Red}Note: This script will install into $PREFIX/bin and $PREFIX/lib respectively.${End}"
     echo
 
 }
@@ -119,14 +136,14 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt install -y pkg-config autoconf automake libtool git wget make g++ gcc nasm yasm
+    INSTALL pkg-config autoconf automake libtool git wget make g++ gcc nasm yasm
 
-    sudo apt info libx264-dev
+    CHECK libx264-dev
 
     if [[ $? -gt 0 ]]; then
         installLibx264
     else
-        sudo apt install -y libx264-dev
+        INSTALL libx264-dev
     fi
 
 }
@@ -144,16 +161,15 @@ installLibx264() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt remove -y libx264-dev
-    sudo apt purge -y libx264-dev
+    REMOVE libx264-dev
     git clone https://code.videolan.org/videolan/x264.git
     cd x264 || {
         echo "cd failed, aborting at installLibx264:02"
         exit 1
     }
-    sudo ./configure --prefix="/usr" --enable-static --enable-pic
+    ./configure --prefix=$PREFIX --enable-static --enable-pic
     checkForError
-    sudo make -j"$JOBS"
+    make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
@@ -178,23 +194,22 @@ installLibfdk() {
     echo " ---------------------------------------------------------"
     echo
 
-    sudo apt info libfdk-aac-dev
+    CHECK libfdk-aac-dev
     if [[ $? = 0 ]]; then
-        sudo apt install -y libfdk-aac-dev
+        INSTALL libfdk-aac-dev
         return
     fi
 
-    sudo apt remove -y libfdk-aac-dev
-    sudo apt purge -y libfdk-aac-dev
+    REMOVE libfdk-aac-dev
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac || {
         echo "cd failed, aborting at installLibfdk:02"
         exit 1
     }
-    sudo ./autogen.sh
-    sudo ./configure --prefix="/usr" --enable-static --disable-shared
+    ./autogen.sh
+    ./configure --prefix=$PREFIX --enable-static --disable-shared
     checkForError
-    sudo make -j"$JOBS"
+    make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
@@ -218,8 +233,7 @@ installFFmpeg() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    sudo apt remove -y ffmpeg
-    sudo apt purge -y ffmpeg
+    REMOVE ffmpeg
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
@@ -228,7 +242,7 @@ installFFmpeg() {
         exit 1
     }
 
-    CMD="--prefix=\"/usr\" --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
+    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
@@ -244,9 +258,9 @@ installFFmpeg() {
         CMD="$CMD $FLAGS"
     fi
 
-    sudo ./configure $CMD
+    ./configure $CMD
     checkForError
-    sudo make -j"$JOBS"
+    make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
@@ -258,10 +272,10 @@ installFFmpeg() {
 
 # Clear Up
 cleanDirectory() {
-    sudo rm -rf ffmpeg
-    sudo rm -rf fdk-aac
-    sudo rm -rf x264
-    sudo rm -f ffmpeg-snapshot.tar.bz2
+    rm -rf ffmpeg
+    rm -rf fdk-aac
+    rm -rf x264
+    rm -f ffmpeg-snapshot.tar.bz2
 }
 
 # Ask for Threads

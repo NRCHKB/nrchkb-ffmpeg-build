@@ -51,13 +51,13 @@ export CFLAGS="-I$PREFIX/include"
 
 # Specific package manager implemention
 INSTALL() {
-    apk add $@
+    brew install $@
 }
 REMOVE() {
-    apk del $1
+    brew remove $1
 }
 CHECK() {
-    apk info $1
+    brew info $1
 }
 
 # Print Header
@@ -67,7 +67,7 @@ printHeader() {
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                   1.1 |"
-    echo " |          P&M FFmpeg Build Script (Alpine)             |"
+    echo " |             P&M FFmpeg Build Script (OSX)             |"
     echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
@@ -82,7 +82,7 @@ menu() {
 
     echo " ${Yellow}What would you like to do:${End}"
     echo
-    echo "   1 - Install build tools (dependencies from apk)"
+    echo "   1 - Install build tools (dependencies from brew)"
     echo "   2 - Build/install libfdk-aac (AAC encoder, needed for HomeKit audio)"
     echo "   3 - Build/install FFmpeg (video processor, builds from source)"
     echo "   4 - All of the above"
@@ -135,14 +135,14 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    INSTALL pkgconfig autoconf automake libtool git wget make g++ gcc nasm yasm
+    INSTALL pkg-config autoconf automake libtool git wget make nasm yasm
 
-    CHECK x264-dev
+    CHECK x264
 
     if [[ $? -gt 0 ]]; then
         installLibx264
     else
-        INSTALL x264-dev
+        INSTALL x264
     fi
 
 }
@@ -160,7 +160,7 @@ installLibx264() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    REMOVE x264-dev
+    REMOVE x264
     git clone https://code.videolan.org/videolan/x264.git
     cd x264 || {
         echo "cd failed, aborting at installLibx264:02"
@@ -170,9 +170,8 @@ installLibx264() {
     checkForError
     make -j"$JOBS"
     checkForError
-    make install
+    sudo make install
     checkForError
-    ldconfig
     cd ~ || {
         echo "cd failed, aborting at installLibx264:03"
         exit 1
@@ -193,13 +192,13 @@ installLibfdk() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK fdk-aac-dev
+    CHECK fdk-aac
     if [[ $? = 0 ]]; then
-        apk add fdk-aac-dev
+        INSTALL fdk-aac
         return
     fi
 
-    REMOVE fdk-aac-dev
+    REMOVE fdk-aac
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac || {
         echo "cd failed, aborting at installLibfdk:02"
@@ -210,9 +209,8 @@ installLibfdk() {
     checkForError
     make -j"$JOBS"
     checkForError
-    make install
+    sudo make install
     checkForError
-    ldconfig
     cd ~ || {
         echo "cd failed, aborting at installLibfdk:03"
         exit 1
@@ -261,7 +259,7 @@ installFFmpeg() {
     checkForError
     make -j"$JOBS"
     checkForError
-    make install
+    sudo make install
     checkForError
     cd ~ || {
         echo "cd failed, aborting at installFFmpeg:03"

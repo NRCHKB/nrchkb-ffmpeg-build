@@ -1,14 +1,25 @@
 #!/bin/bash
 
-# Colors
-Red=$'\e[0;31m'
-Yellow=$'\e[1;33m'
-End=$'\e[0m'
-
+# Clear Terminal
 printf "\033c"
 
-if [[ $(which apk) ]]; then
+# OSX
+if [[ "$OSTYPE" == "darwin"* ]]; then
+   if [[ $(which brew) ]]; then
+      bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-osx.sh) "$@"
+   else
+      echo
+      echo " OSX environments require 'brew' to be installed, and for it to be included in the PATH variable."
+      echo
+      exit 0
+   fi
+   exit 0
+# Apline
+elif [[ $(which apk) ]]; then
    bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-alpine.sh) "$@"
-else
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-debian.sh) "$@"
+   exit 0
+# Debian
+elif [[ $(which apt) ]]; then
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-alpine.sh) "$@"
+   exit 0
 fi
