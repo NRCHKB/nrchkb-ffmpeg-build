@@ -26,7 +26,7 @@ Tested systems
   - Raspberry Pi 4  (64 Bit)
   - Raspberry Pi 3A+  (64 Bit)
 
-- **Buster** (32Bit)
+- **Buster**
   - Raspberry Pi 4 (32 Bit)
   - Raspberry Pi 3B+ (32 Bit)
   - Raspberry Pi 3B (32 Bit)
