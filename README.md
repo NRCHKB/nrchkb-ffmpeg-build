@@ -16,28 +16,24 @@ Highlights
 
 Tested systems
 
-- Bullseye (32Bit)
-  - Raspberry Pi Zero W1
-
-- Bullseye (64Bit)
-  - Raspberry Pi Zero W2
-  - Raspberry Pi 4 
-  - Raspberry Pi 3A+
+- Bullseye
+  - Raspberry Pi Zero W1 (32 Bit)
+  - Raspberry Pi Zero W2 (64 Bit)
+  - Raspberry Pi 4  (64 Bit)
+  - Raspberry Pi 3A+  (64 Bit)
 
 - Buster (32Bit)
-  - Raspberry Pi 4
-  - Raspberry Pi 3B+
-  - Raspberry Pi 3B
+  - Raspberry Pi 4 (32 Bit)
+  - Raspberry Pi 3B+ (32 Bit)
+  - Raspberry Pi 3B (32 Bit)
 
-- Ubuntu (64 Bit)
-  - Intel
+- Ubuntu
+  - Intel (64 Bit)
+  - Apple M1 (Virtual) (64 Bit)
 
-- Alpine (64Bit)
-  - ARM64
-
-- Alpine (32Bit)
-  - ARM
-
+- Alpine
+  - Apple M1 (Virtual) (64 Bit)
+  - Raspberry Pi 3B (32 Bit)
 
 
 ![image](./Menu1.png)
