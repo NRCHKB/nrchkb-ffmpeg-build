@@ -20,6 +20,6 @@ elif [[ $(which apk) ]]; then
    exit 0
 # Debian
 elif [[ $(which apt) ]]; then
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-alpine.sh) "$@"
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-debian.sh) "$@"
    exit 0
 fi
