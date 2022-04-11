@@ -1,42 +1,45 @@
 # ffmpeg-build-script
 
 This build script, is to support the NRCHKB project in allowing fully updatable FFmpeg builds.  
-It is designed for multiple Raspberry Pi versions (arm), OS's and intel hosts.
+It supports Raspberry Pi OS, Ubuntu, Alpine, OSX and multiple CPU architectures (x86, x64, ARM)
 
 Highlights
 
 - FFmpeg 5.0+ (Built for your platform)
 - 32 and 64 bit support
-- libfdk-aac (Built for your platform)
-- libx264 (Installed via apt, or will build from source as a fallback if not available)
+- libfdk-aac (Installed via the platform's package manager, or will build from source as a fallback if not available)
+- libx264 (Installed via the platform's package manager, or will build from source as a fallback if not available)
 - h264_omx (32Bit only, Raspberry Pi only, deprecated)
 - h264_v4l2m2m (replaces h264_omx)
 - Ability to add extra compile flags
-- Automate with command line argumnets.
+- Automate with command line arguments.
 
 Tested systems
 
-- Bullseye (32Bit)
-  - Raspberry Pi Zero W1
+- **Alpine**
+  - Apple M1 (Virtual) (64 Bit)
+  - Raspberry Pi 3B (32 Bit)
 
-- Bullseye (64Bit)
-  - Raspberry Pi Zero W2
-  - Raspberry Pi 4 
-  - Raspberry Pi 3A+
+- **Bullseye**
+  - Raspberry Pi Zero W1 (32 Bit)
+  - Raspberry Pi Zero W2 (64 Bit)
+  - Raspberry Pi 4  (64 Bit)
+  - Raspberry Pi 3A+  (64 Bit)
 
-- Buster (32Bit)
-  - Raspberry Pi 4
-  - Raspberry Pi 3B+
-  - Raspberry Pi 3B
+- **Buster**
+  - Raspberry Pi 4 (32 Bit)
+  - Raspberry Pi 3B+ (32 Bit)
+  - Raspberry Pi 3B (32 Bit)
 
-- Ubuntu (64 Bit)
-  - Intel
+- **macOS Monterey**
+  - Apple M1 (64 Bit)
 
-- Alpine (64Bit)
-  - ARM64
+- **Ubuntu**
+  - Intel (64 Bit)
+  - Apple M1 (Virtual) (64 Bit)
 
-- Alpine (32Bit)
-  - ARM
+
+
 
 
 

@@ -1,14 +1,32 @@
 #!/bin/bash
 
-# Colors
-Red=$'\e[0;31m'
-Yellow=$'\e[1;33m'
-End=$'\e[0m'
+# Override Branch?
+if [[ -z "${BRANCH_NAME}" ]]; then
+  BRANCH_NAME="main"
+fi
 
+# Clear Terminal
 printf "\033c"
 
-if [[ $(which apk) ]]; then
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-alpine.sh) "$@"
-else
-   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-debian.sh) "$@"
+# OSX
+if [[ "$OSTYPE" == "darwin"* ]]; then
+   if [[ $(which brew) ]]; then
+      bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/$BRANCH_NAME/build-osx.sh) "$@"
+   else
+      echo
+      echo " ----------------------------------------------------------------------------------------------------"
+      echo " | OSX environments require 'brew' to be installed, and for it to be included in the PATH variable. |"
+      echo " ----------------------------------------------------------------------------------------------------"
+      echo
+      exit 0
+   fi
+   exit 0
+# Apline
+elif [[ $(which apk) ]]; then
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/$BRANCH_NAME/build-alpine.sh) "$@"
+   exit 0
+# Debian
+elif [[ $(which apt) ]]; then
+   bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/$BRANCH_NAME/build-debian.sh) "$@"
+   exit 0
 fi
