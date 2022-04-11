@@ -8,21 +8,21 @@ env:
   BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
   
 jobs:
-  all-no-options:
+  test_builds:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, ARM]
+        os: [ubuntu-latest, macos-latest]
+        max-jobs: [3]
+        libfdk-aac: [y, n]
+        include:
+          - os: ARM
+            maxJobs: 2
+            libfdk-aac: y
+          - os: ARM
+            maxJobs: 2
+            libfdk-aac: n
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: bash build-bootstrap.sh --interactive n --mode 4 --max-jobs 1 --libfdk-aac n --h264-omx n
-  all-with-libfdk-aac:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, ARM]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        run: bash build-bootstrap.sh --interactive n --mode 4 --max-jobs 1 --libfdk-aac y --h264-omx n
+        run: bash build-bootstrap.sh --interactive n --mode 4 --max-jobs ${{ matrix.max-jobs }} --libfdk-aac ${{ matrix.libfdk-aac }} --h264-omx n
