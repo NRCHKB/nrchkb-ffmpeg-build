@@ -9,9 +9,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       bash <(curl -sL https://raw.githubusercontent.com/NRCHKB/nrchkb-ffmpeg-build/main/build-osx.sh) "$@"
    else
       echo
-      echo "----------------------------------------------------------------------------------------------------"
-      echo "| OSX environments require 'brew' to be installed, and for it to be included in the PATH variable. |"
-      echo "----------------------------------------------------------------------------------------------------"
+      echo " ----------------------------------------------------------------------------------------------------"
+      echo " | OSX environments require 'brew' to be installed, and for it to be included in the PATH variable. |"
+      echo " ----------------------------------------------------------------------------------------------------"
       echo
       exit 0
    fi
