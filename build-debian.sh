@@ -261,7 +261,7 @@ installFFmpeg() {
     tar xjf ffmpeg-snapshot.tar.bz2
     cd ffmpeg
 
-    CMD='--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs="-lpthread -lm"'
+    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs='-lpthread -lm'"
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
