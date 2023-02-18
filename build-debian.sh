@@ -63,6 +63,9 @@ PREFIX="/usr/local"
 export LDFLAGS="-L$PREFIX/lib"
 export CFLAGS="-I$PREFIX/include"
 
+# Ignore Repository sources
+FORCE_BUILD=false
+
 # Specific package manager implemention
 INSTALL() {
     sudo apt install -y $@
@@ -179,10 +182,12 @@ installLibx264() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK $DEP_X264
-    if [[ $? = 0 ]]; then
-        INSTALL $DEP_X264
-        return
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_X264
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_X264
+            return
+        fi
     fi
 
 
@@ -210,17 +215,19 @@ installLibx265() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK $DEP_X265
-    if [[ $? = 0 ]]; then
-        INSTALL $DEP_X265
-        return
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_X265
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_X265
+            return
+        fi
     fi
 
 
     REMOVE $DEP_X265
     git clone https://bitbucket.org/multicoreware/x265_git.git
-    cd x265
-    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
+    cd x265_git/build/linux
+    cmake -G "Unix Makefiles" -DLIB_INSTALL_DIR="$PREFIX/lib" -DENABLE_SHARED=on -DENABLE_PIC=on ../../source
     checkForError
     make -j"$JOBS"
     checkForError
@@ -241,10 +248,12 @@ installLibfdk() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK $DEP_AAC
-    if [[ $? = 0 ]]; then
-        INSTALL $DEP_AAC
-        return
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_AAC
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_AAC
+            return
+        fi
     fi
 
     REMOVE $DEP_AAC
@@ -272,10 +281,12 @@ installLibvpx() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK $DEP_VPX
-    if [[ $? = 0 ]]; then
-        INSTALL $DEP_VPX
-        return
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_VPX
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_VPX
+            return
+        fi
     fi
 
     REMOVE $DEP_VPX
@@ -303,15 +314,17 @@ installLibopus() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK $DEP_OPUS
-    if [[ $? = 0 ]]; then
-        INSTALL $DEP_OPUS
-        return
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_OPUS
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_OPUS
+            return
+        fi
     fi
 
     REMOVE $DEP_OPUS
     git clone https://github.com/xiph/opus.git
-    cd libvpx
+    cd opus
     ./autogen.sh
     ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
@@ -381,7 +394,7 @@ cleanDirectory() {
     rm -rf ffmpeg
     rm -rf fdk-aac
     rm -rf x264
-    rm -rf x265
+    rm -rf x265_git
     rm -rf libvpx
     rm -rf opus
     rm -f ffmpeg-snapshot.tar.bz2
@@ -620,45 +633,58 @@ while [ $# -gt 0 ]; do
 
     case "$1" in
 
-    --help | -h)
+    --help)
+        printf "\033c"
         echo "Options:"
         echo
-        echo " --interactive -i    [y|n]             Default: y        Disables interactive mode"
-        echo " --mode        -m    [1|2|3|4|5|6|7]                     Sets the mode (requires --interactive 0, ignored otherwise)"
-        echo " --max-jobs    -j    [#]               Default: 3        Set maximum number of builds jobs"
-        echo " --libfdk-aac  -a    [y|n]             Default: y        Compile/enable libfdk-aac"
-        echo " --libx264     -4    [y|n]             Default: y        Compile/enable libx264"
-        echo " --libx265     -5    [y|n]             Default: y        Compile/enable libx265"
-        echo " --extra-flags -f    [\"--*-* --*-*\"] Default: empty    Provides compile flags for ffmpeg"
-        echo
-        echo " Example: ./build-debian.sh --interactive n --max-jobs 2 --mode 4"
+        echo " --force-build                              : Forces the build of required libs, regaldess of their availability with the systems repository sources"
+        echo " --none-interactive                         : Disables interactive mode"
+        echo " --mode               [1-9]                 : Sets the operation. Requies --none-interactive"
+        echo " --max-jobs           [1-#] Default: 3      : Sets the number of build threads"
+        echo " --libfdk-aac         [y:n] Default: y      : Enable/Disable this lib"
+        echo " --libx264            [y:n] Default: y      : Enable/Disable this lib"
+        echo " --libx265            [y:n] Default: n      : Enable/Disable this lib"
+        echo " --libopus            [y:n] Default: n      : Enable/Disable this lib"
+        echo " --libvpx             [y:n] Default: n      : Enable/Disable this lib"
+        echo " --extra-flags        [*]   Default: None   : Adds extra build args to the ffmpeg build"
         echo
         exit 0
         ;;
-    --interactive | -i)
-        INTERACTIVE="$2"
+    --force-build)
+        FORCE_BUILD=true
         ;;
-    --mode | -m)
+    --none-interactive)
+        INTERACTIVE="n"
+        ;;
+    --mode)
         MODE=$2
         MODE_PARAM=true
         ;;
-    --max-jobs | -j)
+    --max-jobs)
         JOBS=$2
         JOBS_PARAM=true
         ;;
-    --libfdk-aac | -a)
+    --libfdk-aac)
         FDK="$2"
         FDK_PARAM=true
         ;;
-    --libx264 | -4)
+    --libx264)
         L264="$2"
         L264_PARAM=true
         ;;
-    --libx265 | -5)
+    --libx265)
         L265="$2"
         L265_PARAM=true
         ;;
-    --extra-flags | -f)
+    --libopus)
+        LOPUS="$2"
+        LOPUS_PARAM=true
+        ;;
+    --libvpx)
+        LVPX="$2"
+        LVPX_PARAM=true
+        ;;
+    --extra-flags)
         FLAGSYN="y"
         FLAGS="$2"
         FLAGS_PARAM=true
