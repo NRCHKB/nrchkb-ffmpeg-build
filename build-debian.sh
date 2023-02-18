@@ -260,8 +260,9 @@ installFFmpeg() {
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
     cd ffmpeg
+    
 
-    CMD=--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs="-lpthread -lm"
+    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared"
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
@@ -279,7 +280,7 @@ installFFmpeg() {
         CMD="$CMD $FLAGS"
     fi
 
-    ./configure $CMD
+    ./configure $CMD --extra-libs="-lpthread -lm"
     checkForError
     make -j"$JOBS"
     checkForError
