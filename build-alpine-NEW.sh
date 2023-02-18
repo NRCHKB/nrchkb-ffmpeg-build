@@ -197,9 +197,9 @@ installLibx264() {
     checkForError
     make -j"$JOBS"
     checkForError
-    sudo make install
+    make install
     checkForError
-    sudo ldconfig
+    ldconfig
     cd ~
 }
 
@@ -230,9 +230,9 @@ installLibx265() {
     checkForError
     make -j"$JOBS"
     checkForError
-    sudo make install
+    make install
     checkForError
-    sudo ldconfig
+    ldconfig
     cd ~
 }
 
@@ -263,9 +263,9 @@ installLibfdk() {
     checkForError
     make -j"$JOBS"
     checkForError
-    sudo make install
+    make install
     checkForError
-    sudo ldconfig
+    ldconfig
     cd ~
 }
 
@@ -296,9 +296,9 @@ installLibvpx() {
     checkForError
     make -j"$JOBS"
     checkForError
-    sudo make install
+    make install
     checkForError
-    sudo ldconfig
+    ldconfig
     cd ~
 }
 
@@ -329,9 +329,9 @@ installLibopus() {
     checkForError
     make -j"$JOBS"
     checkForError
-    sudo make install
+    make install
     checkForError
-    sudo ldconfig
+    ldconfig
     cd ~
 }
 
@@ -382,9 +382,9 @@ installFFmpeg() {
     checkForError
     make -j"$JOBS"
     checkForError
-    sudo make install
+    make install
     checkForError
-    sudo ldconfig
+    ldconfig
     cd ~
 }
 
