@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 1.1
+# nrchkb-ffmpeg-build Version 2.0
 
 # MIT License
 
@@ -33,10 +33,12 @@ End=$'\e[0m'
 # Defaults
 JOBS=3           # Jobs Value
 JOBSPARAM=false  # Arg provided
-OMX="n"          # OMX Choice Value
-OMXPARAM=false   # Arg provided
 FDK="y"          # FDK Choice Value
 FDKPARAM=false   # Arg provided
+L264="y"         # 264 Choice Value
+L264ARAM=false   # Arg provided
+L265="y"         # 265 Choice Value
+L265ARAM=false   # Arg provided
 FLAGSYN="n"      # Flags Choice Value
 FLAGS=""         # Flasg Value
 FLAGSPARAM=false # Arg provided
@@ -61,19 +63,24 @@ CHECK() {
     apt info $1
 }
 
+# Package Names
+DEPX264="libx264-dev"
+DEPX265="libx265-dev"
+DEPAAC="libfdk-aac-dev"
+
 # Print Header
 printHeader() {
 
     printf "\033c"
     echo
     echo " ---------------------------------------------------------"
-    echo " |                                                   1.1 |"
+    echo " |                                                   2.0 |"
     echo " |          P&M FFmpeg Build Script (Debian)             |"
     echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    echo " ${Red}Note: This script will install into $PREFIX/bin and $PREFIX/lib respectively.${End}"
+    echo " ${Yellow}Note: This script will install into $PREFIX/bin and $PREFIX/lib respectively.${End}"
     echo
 
 }
@@ -83,17 +90,22 @@ menu() {
 
     echo " ${Yellow}What would you like to do:${End}"
     echo
-    echo "   1 - Install build tools (dependencies from apt)"
-    echo "   2 - Build/install libfdk-aac (AAC encoder, needed for HomeKit audio)"
-    echo "   3 - Build/install FFmpeg (video processor, builds from source)"
-    echo "   4 - All of the above"
-    echo "   5 - Cleanup build directories"
+    echo "   1 - Install build tools (Dependencies from apt)"
+    echo "   2 - Build/install libfdk-aac (AAC Audio Encoder)"
+    echo "   3 - Build/install libx264 (x264 Video Encoder)"
+    echo "   4 - Build/install libx265 (x265 Video Encoder)"
+    echo "   5 - Build FFmpeg (Biulds from source only)"
+    echo "   6 - All of the above"
+    echo "   7 - Purge build directories"
     echo "   q - Quit"
     echo
-    echo "   Note: this script will download and compile these software packages from source code."
-    echo "   This will take a long time. Option 4 will take over 6 hours on a Pi Zero W."
+    echo "   Note: This script will download and compile these software packages from source code,"
+    echo "         unless they happen to be available from your systems repository."
+    echo "         Where necessary, libaries will be built as shared libs."
+    echo 
+    echo "         This excludes FFMPEG which will always be built for source."
     echo
-    echo "   If you have previously run this script, running it again will update your software."
+    echo "         If you have previously run this script, running it again will update your software."
     echo
     printf "   Choice: "
     read -r
@@ -103,7 +115,7 @@ menu() {
 
     MODE=$REPLY
 
-    if [[ $MODE -gt 5 || $MODE -lt 1 ]]; then
+    if [[ $MODE -gt 8 || $MODE -lt 1 ]]; then
         printHeader
         menu
     fi
@@ -136,24 +148,13 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    INSTALL pkg-config autoconf automake libtool git wget make g++ gcc nasm yasm
-
-    CHECK libx264-dev
-
-    if [[ $? -gt 0 ]]; then
-        installLibx264
-    else
-        INSTALL libx264-dev
-    fi
+    INSTALL pkg-config autoconf automake libtool git wget make g++ gcc nasm yasm build-essential cmake-curses-gui cmake
 
 }
 
 # Install Libx264
 installLibx264() {
-    cd ~ || {
-        echo "cd failed, aborting at installLibx264:01"
-        exit 1
-    }
+    cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -161,31 +162,61 @@ installLibx264() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    REMOVE libx264-dev
+
+    CHECK $DEPX264
+    if [[ $? = 0 ]]; then
+        INSTALL $DEPX264
+        return
+    fi
+
+
+    REMOVE $DEPX264
     git clone https://code.videolan.org/videolan/x264.git
-    cd x264 || {
-        echo "cd failed, aborting at installLibx264:02"
-        exit 1
-    }
-    ./configure --prefix=$PREFIX --enable-static --enable-pic
+    cd x264
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
     make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~ || {
-        echo "cd failed, aborting at installLibx264:03"
-        exit 1
-    }
+    cd ~
+}
+
+# Install Libx265
+installLibx265() {
+    cd ~
+    echo
+    echo " ---------------------------------------------------------"
+    echo " |                                                       |"
+    echo " |              Building/Installing libx265              |"
+    echo " |                                                       |"
+    echo " ---------------------------------------------------------"
+    echo
+
+    CHECK $DEPX265
+    if [[ $? = 0 ]]; then
+        INSTALL $DEPX265
+        return
+    fi
+
+
+    REMOVE $DEPX265
+    git clone https://bitbucket.org/multicoreware/x265_git.git
+    cd x265
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
+    checkForError
+    make -j"$JOBS"
+    checkForError
+    sudo make install
+    checkForError
+    sudo ldconfig
+    cd ~
 }
 
 # Install Libfdk
 installLibfdk() {
-    cd ~ || {
-        echo "cd failed, aborting at installLibfdk:01"
-        exit 1
-    }
+    cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -194,38 +225,29 @@ installLibfdk() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK libfdk-aac-dev
+    CHECK $DEPAAC
     if [[ $? = 0 ]]; then
-        INSTALL libfdk-aac-dev
+        INSTALL $DEPAAC
         return
     fi
 
-    REMOVE libfdk-aac-dev
+    REMOVE $DEPAAC
     git clone https://github.com/mstorsjo/fdk-aac.git
-    cd fdk-aac || {
-        echo "cd failed, aborting at installLibfdk:02"
-        exit 1
-    }
+    cd fdk-aac
     ./autogen.sh
-    ./configure --prefix=$PREFIX --enable-static --disable-shared
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
     make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~ || {
-        echo "cd failed, aborting at installLibfdk:03"
-        exit 1
-    }
+    cd ~
 }
 
 # Install FFmpeg
 installFFmpeg() {
-    cd ~ || {
-        echo "cd failed, aborting at installFFmpeg:01"
-        exit 1
-    }
+    cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -237,21 +259,20 @@ installFFmpeg() {
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
-    cd ffmpeg || {
-        echo "cd failed, aborting at installFFmpeg:02"
-        exit 1
-    }
+    cd ffmpeg
 
-    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
+    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs=\"-lpthread -lm\""
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
     fi
 
-    if [[ "$OMX" = "y" ]]; then
-        CMD="$CMD --enable-mmal"
-        CMD="$CMD --enable-omx"
-        CMD="$CMD --enable-omx-rpi"
+    if [[ "$L264" = "y" ]]; then
+        CMD="$CMD --enable-libx264"
+    fi
+
+    if [[ "$L265" = "y" ]]; then
+        CMD="$CMD --enable-libx265"
     fi
 
     if [[ "$FLAGSYN" = "y" ]]; then
@@ -264,10 +285,7 @@ installFFmpeg() {
     checkForError
     sudo make install
     checkForError
-    cd ~ || {
-        echo "cd failed, aborting at installFFmpeg:03"
-        exit 1
-    }
+    cd ~
 }
 
 # Clear Up
@@ -275,6 +293,7 @@ cleanDirectory() {
     rm -rf ffmpeg
     rm -rf fdk-aac
     rm -rf x264
+    rm -rf x265
     rm -f ffmpeg-snapshot.tar.bz2
 }
 
@@ -296,24 +315,6 @@ getJobsCount() {
     fi
 }
 
-# Ask for omx
-getOMX() {
-
-    if [[ $OMXPARAM = true || "$INTERACTIVE" = "n" ]]; then
-        return
-    fi
-
-    echo
-    echo "   ${Yellow}Would you like to enable 'h264_omx'?${End}"
-    echo
-    echo "   Note: 'h264_omx' is deprecated and should not be used on new installs."
-    printf "   If you already use it, choose yes here. Enter (y/n): "
-    read -r
-    if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
-        OMX="$REPLY"
-    fi
-}
-
 # Ask for FDK
 getFDK() {
 
@@ -325,10 +326,46 @@ getFDK() {
     echo "   ${Yellow}Would you like to enable 'libfdk-aac'?${End}"
     echo
     echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend enabling libfdk-aac."
-    printf "   If you are running Option 4, you can enable this lib. Enter (y/n): "
+    printf "   If you are running Option 5, you can enable this lib. Enter (y/n): "
     read -r
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
         FDK="$REPLY"
+    fi
+}
+
+# Ask for X264
+getX624() {
+
+    if [[ $L264ARAM = true || "$INTERACTIVE" = "n" ]]; then
+        return
+    fi
+
+    echo
+    echo "   ${Yellow}Would you like to enable 'libx264'?${End}"
+    echo
+    echo "   Note: 'libx264' is needed for HomeKit video, as that is the only codc is will support."
+    printf "   If you are running Option 5, you can enable this lib. Enter (y/n): "
+    read -r
+    if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
+        L264="$REPLY"
+    fi
+}
+
+# Ask for X265
+getX625() {
+
+    if [[ $L265ARAM = true || "$INTERACTIVE" = "n" ]]; then
+        return
+    fi
+
+    echo
+    echo "   ${Yellow}Would you like to enable 'libx265'?${End}"
+    echo
+    echo "   Whilst not strictly requied, will add support never the less."
+    printf "   If you are running Option 5, you can enable this lib. Enter (y/n): "
+    read -r
+    if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
+        L265="$REPLY"
     fi
 }
 
@@ -342,8 +379,8 @@ getFlags() {
     echo
     echo "   ${Yellow}Would you like to add any extra FFmpeg compile flags?"
     echo
-    echo "   ADVANCED: ${End}Compile flags could be added to enable libx265 or the countless others"
-    printf "   You are responsible for ensuring any required parts are installed (y/n): "
+    echo "   ADVANCED: ${End}Compile flags could be added to the build process, to ensure ffmpeg is compiled with more features."
+    printf "   You are responsible for ensuring any requied dev/header files are installed (y/n): "
     read -r
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
         FLAGSYN="$REPLY"
@@ -351,7 +388,7 @@ getFlags() {
             echo
             echo "   ${Yellow}Please enter your compile flags below, separated by a space${End}"
             echo
-            printf "   Example '--enable-libx265 --enable-libopus' : "
+            printf "   Example '--enable-vaapi --enable-libopus' : "
             read -r
             if [[ ${#REPLY} -gt 0 ]]; then
                 FLAGS="$REPLY"
@@ -389,7 +426,6 @@ processOptions() {
     case $1 in
 
     1)
-        getJobsCount
         stopWatch "start"
         installDependencies
         stopWatch "stop"
@@ -416,11 +452,8 @@ processOptions() {
 
     3)
         getJobsCount
-        getOMX
-        getFDK
-        getFlags
         stopWatch "start"
-        installFFmpeg
+        installLibx264
         stopWatch "stop"
         if [ "$INTERACTIVE" = "y" ]; then
             echo "   ${Yellow}All Done!${End} ...press enter"
@@ -429,20 +462,10 @@ processOptions() {
             menu
         fi
         ;;
-
     4)
-        cleanDirectory
         getJobsCount
-        getOMX
-        getFDK
-        getFlags
         stopWatch "start"
-        installDependencies
-        if [[ "$FDK" = "y" ]]; then
-            installLibfdk
-        fi
-        installFFmpeg
-        cleanDirectory
+        installLibx265
         stopWatch "stop"
         if [ "$INTERACTIVE" = "y" ]; then
             echo "   ${Yellow}All Done!${End} ...press enter"
@@ -453,6 +476,47 @@ processOptions() {
         ;;
 
     5)
+        getJobsCount
+        stopWatch "start"
+        installFFmpeg
+        stopWatch "stop"
+        if [ "$INTERACTIVE" = "y" ]; then
+            echo "   ${Yellow}All Done!${End} ...press enter"
+            read -r
+            printHeader
+            menu
+        fi
+        ;;
+
+    6)
+        getJobsCount
+        getFDK
+        getX624
+        getX625
+        getFlags
+        stopWatch "start"
+        installDependencies
+        if [[ "$FDK" = "y" ]]; then
+            installLibfdk
+        fi
+        if [[ "$L264" = "y" ]]; then
+            installLibx264
+        fi
+        if [[ "$L265" = "y" ]]; then
+            installLibx265
+        fi
+        installFFmpeg
+        cleanDirectory
+        stopWatch "stop"
+        if [ "$INTERACTIVE" = "y" ]; then
+            echo "   ${Yellow}All Done!${End} ...press enter"
+            read -r
+            printHeader
+            menu
+        fi
+        ;;
+
+    7)
         stopWatch "start"
         cleanDirectory
         stopWatch "stop"
@@ -480,10 +544,11 @@ while [ $# -gt 0 ]; do
         echo "Options:"
         echo
         echo " --interactive -i    [y|n]             Default: y        Disables interactive mode"
-        echo " --mode        -m    [1|2|3|4|5]                         Sets the mode (requires --interactive 0, ignored otherwise)"
+        echo " --mode        -m    [1|2|3|4|5|6|7]                     Sets the mode (requires --interactive 0, ignored otherwise)"
         echo " --max-jobs    -j    [#]               Default: 3        Set maximum number of builds jobs"
         echo " --libfdk-aac  -a    [y|n]             Default: y        Compile/enable libfdk-aac"
-        echo " --h264-omx    -x    [y|n]             Default: n        Enable h264-omx"
+        echo " --libx264     -4    [y|n]             Default: y        Compile/enable libx264"
+        echo " --libx265     -5    [y|n]             Default: y        Compile/enable libx265"
         echo " --extra-flags -f    [\"--*-* --*-*\"]   Default: empty    Provides compile flags for ffmpeg"
         echo
         echo " Example: ./build-debian.sh --interactive n --max-jobs 2 --mode 4"
@@ -501,13 +566,17 @@ while [ $# -gt 0 ]; do
         JOBS=$2
         JOBSPARAM=true
         ;;
-    --h264-omx | -x)
-        OMX="$2"
-        OMXPARAM=true
-        ;;
     --libfdk-aac | -a)
         FDK="$2"
         FDKPARAM=true
+        ;;
+    --libx264 | -4)
+        L264="$2"
+        L264ARAM=true
+        ;;
+    --libx265 | -5)
+        L265="$2"
+        L265ARAM=true
         ;;
     --extra-flags | -f)
         FLAGSYN="y"
