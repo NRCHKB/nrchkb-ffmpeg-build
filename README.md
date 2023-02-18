@@ -10,6 +10,8 @@ Highlights
 - libfdk-aac (Installed via the platform's package manager, or will build from source as a fallback if not available)
 - libx264 (Installed via the platform's package manager, or will build from source as a fallback if not available)
 - libx265 (Installed via the platform's package manager, or will build from source as a fallback if not available)
+- libvpx (Installed via the platform's package manager, or will build from source as a fallback if not available)
+- libopus (Installed via the platform's package manager, or will build from source as a fallback if not available)
 - h264_v4l2m2m (replaces h264_omx)
 - Ability to add extra compile flags
 - Automate with command line arguments.
