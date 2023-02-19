@@ -166,7 +166,7 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    INSTALL pkgconfig autoconf automake libtool git wget make g++ gcc nasm yasm build-base cmake
+    INSTALL pkgconfig autoconf automake libtool git wget make g++ gcc nasm yasm build-base cmake diffutils
 
 }
 
