@@ -16,32 +16,24 @@ Highlights
 - Ability to add extra compile flags
 - Automate with command line arguments.
 
-Tested systems
+Tested Environments
 
 - **Alpine**
 
-  - 64Bit ARM
+  - 64Bit ARM (VMware Fusion, Apple M1)
 
-- **Bullseye**
+- **RPI Bullseye**
 
-  - Raspberry Pi Zero W1 (32 Bit)
-  - Raspberry Pi Zero W2 (64 Bit)
-  - Raspberry Pi 4 (64 Bit)
-  - Raspberry Pi 3A+ (64 Bit)
-
-- **Buster**
-
-  - Raspberry Pi 4 (32 Bit)
-  - Raspberry Pi 3B+ (32 Bit)
-  - Raspberry Pi 3B (32 Bit)
+  - 32Bit ARM (RPI Zero W1)
+  - 64Bit ARM (RPI Zero W2)
 
 - **macOS Ventura**
 
-  - 64Bit ARM
+  - 64Bit ARM (Apple Mac Mini M1)
 
 - **Ubuntu**
 
-  - 64Bit ARM
+  - 64Bit ARM (VMware Fusion, Apple M1)
 
 ![image](./Menu1.png)
 
