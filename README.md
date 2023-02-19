@@ -24,7 +24,6 @@ Tested Environments
 
 - **RPI Bullseye**
 
-  - 32Bit ARM (RPI Zero W1)
   - 64Bit ARM (RPI Zero W2)
 
 - **macOS Ventura**
@@ -41,7 +40,7 @@ Tested Environments
 
 Copy the below and paste it in your terminal.
 
-Note: If your OS is Alpine, install curl and bash first.
+Note: If your OS is Alpine, install `curl` and `bash` first.
 
 ```
 apk add curl bash
