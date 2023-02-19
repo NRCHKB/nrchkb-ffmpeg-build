@@ -20,8 +20,7 @@ Tested systems
 
 - **Alpine**
 
-  - Apple M1 (Virtual) (64 Bit)
-  - Raspberry Pi 3B (32 Bit)
+  - 64Bit ARM
 
 - **Bullseye**
 
@@ -36,13 +35,13 @@ Tested systems
   - Raspberry Pi 3B+ (32 Bit)
   - Raspberry Pi 3B (32 Bit)
 
-- **macOS Monterey**
+- **macOS Ventura**
 
-  - Apple M1 (64 Bit)
+  - 64Bit ARM
 
 - **Ubuntu**
-  - Intel (64 Bit)
-  - Apple M1 (Virtual) (64 Bit)
+
+  - 64Bit ARM
 
 ![image](./Menu1.png)
 
