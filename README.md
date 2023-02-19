@@ -33,6 +33,7 @@ Tested Environments
 - **Ubuntu**
 
   - 64Bit ARM (VMware Fusion, Apple M1)
+  - 64BIT AMD/INTEL
 
 ![image](./Menu1.png)
 
