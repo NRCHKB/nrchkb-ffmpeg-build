@@ -2,20 +2,24 @@ name: Test builds on various OS and configurations
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
-  
+
 jobs:
   test_build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, ARM]
-        max-jobs: [3]
-        libfdk-aac: [y, n]
+        os: [ubuntu-latest, macos-latest]
+        max-jobs: [4, 4]
+        mode: [8, 8]
+        libx265: [y, y]
+        libopus: [y, y]
+        libvpx: [y, y]
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: bash build-bootstrap.sh --interactive n --mode 4 --max-jobs ${{ matrix.max-jobs }} --libfdk-aac ${{ matrix.libfdk-aac }} --h264-omx n
+        run: bash build-bootstrap.sh --none-interactive --mode ${{ matrix.mode }} --max-jobs ${{ matrix.max-jobs }} --libx265 ${{ matrix.libx265 }} --libopus ${{ matrix.libopus }} --libvpx ${{ matrix.libvpx }}
