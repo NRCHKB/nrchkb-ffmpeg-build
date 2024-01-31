@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 1.1
+# nrchkb-ffmpeg-build Version 2.0
 
 # MIT License
 
@@ -32,22 +32,39 @@ End=$'\e[0m'
 
 # Defaults
 JOBS=3           # Jobs Value
-JOBSPARAM=false  # Arg provided
-OMX="n"          # OMX Choice Value
-OMXPARAM=false   # Arg provided
+JOBS_PARAM=false  # Arg provided
+
 FDK="y"          # FDK Choice Value
-FDKPARAM=false   # Arg provided
+FDK_PARAM=false   # Arg provided
+
+L264="y"         # 264 Choice Value
+L264_PARAM=false  # Arg provided
+
+L265="n"         # 265 Choice Value
+L265_PARAM=false  # Arg provided
+
+LVPX="n"         # VPX Choice Value
+LVPX_PARAM=false   # Arg provided
+
+LOPUS="n"        # Opus Choice Value
+LOPUS_PARAM=false # Arg provided
+
 FLAGSYN="n"      # Flags Choice Value
 FLAGS=""         # Flasg Value
-FLAGSPARAM=false # Arg provided
+FLAGS_PARAM=false # Arg provided
+
 MODE=0           # Mode Value
-MODEPARAM=false  # Arg provided
+MODE_PARAM=false  # Arg provided
+
 INTERACTIVE="y"  # Interactive
 
 # Prefix
 PREFIX="/usr/local"
 export LDFLAGS="-L$PREFIX/lib"
 export CFLAGS="-I$PREFIX/include"
+
+# Ignore Repository sources
+FORCE_BUILD=false
 
 # Specific package manager implemention
 INSTALL() {
@@ -61,19 +78,26 @@ CHECK() {
     apt info $1
 }
 
+# Package Names
+DEP_X264="libx264-dev"
+DEP_X265="libx265-dev"
+DEP_VPX="libvpx-dev"
+DEP_OPUS="libopus-dev"
+DEP_AAC="libfdk-aac-dev"
+
 # Print Header
 printHeader() {
 
     printf "\033c"
     echo
     echo " ---------------------------------------------------------"
-    echo " |                                                   1.1 |"
+    echo " |                                                   2.0 |"
     echo " |          P&M FFmpeg Build Script (Debian)             |"
     echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    echo " ${Red}Note: This script will install into $PREFIX/bin and $PREFIX/lib respectively.${End}"
+    echo " ${Yellow}Note: This script will install into $PREFIX/bin and $PREFIX/lib respectively.${End}"
     echo
 
 }
@@ -83,17 +107,24 @@ menu() {
 
     echo " ${Yellow}What would you like to do:${End}"
     echo
-    echo "   1 - Install build tools (dependencies from apt)"
-    echo "   2 - Build/install libfdk-aac (AAC encoder, needed for HomeKit audio)"
-    echo "   3 - Build/install FFmpeg (video processor, builds from source)"
-    echo "   4 - All of the above"
-    echo "   5 - Cleanup build directories"
+    echo "   1 - Install build tools (Dependencies from apt)"
+    echo "   2 - Build/install libfdk-aac (AAC Audio Encoder)"
+    echo "   3 - Build/install libx264 (x264 Video Encoder)"
+    echo "   4 - Build/install libx265 (x265 Video Encoder)"
+    echo "   5 - Build/install libvpx (VP8/VP9 video Encoder/Decoder)"
+    echo "   6 - Build/install libopus (Opus Audio Encoder/Decoder)"
+    echo "   7 - Build FFmpeg (Builds from source only)"
+    echo "   8 - Guided Install"
+    echo "   9 - Purge build directories"
     echo "   q - Quit"
     echo
-    echo "   Note: this script will download and compile these software packages from source code."
-    echo "   This will take a long time. Option 4 will take over 6 hours on a Pi Zero W."
+    echo "   Note: This script will download and compile these software packages from source code,"
+    echo "         unless they happen to be available from your systems repository."
+    echo "         Where necessary, libaries will be built as shared libs."
+    echo 
+    echo "         This excludes FFMPEG which will always be built for source."
     echo
-    echo "   If you have previously run this script, running it again will update your software."
+    echo "         If you have previously run this script, running it again will update your software."
     echo
     printf "   Choice: "
     read -r
@@ -103,7 +134,7 @@ menu() {
 
     MODE=$REPLY
 
-    if [[ $MODE -gt 5 || $MODE -lt 1 ]]; then
+    if [[ $MODE -gt 8 || $MODE -lt 1 ]]; then
         printHeader
         menu
     fi
@@ -136,24 +167,13 @@ installDependencies() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    INSTALL pkg-config autoconf automake libtool git wget make g++ gcc nasm yasm
-
-    CHECK libx264-dev
-
-    if [[ $? -gt 0 ]]; then
-        installLibx264
-    else
-        INSTALL libx264-dev
-    fi
+    INSTALL pkg-config autoconf automake libtool git wget make g++ gcc nasm yasm build-essential cmake-curses-gui cmake
 
 }
 
 # Install Libx264
 installLibx264() {
-    cd ~ || {
-        echo "cd failed, aborting at installLibx264:01"
-        exit 1
-    }
+    cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -161,31 +181,65 @@ installLibx264() {
     echo " |                                                       |"
     echo " ---------------------------------------------------------"
     echo
-    REMOVE libx264-dev
+
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_X264
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_X264
+            return
+        fi
+    fi
+
+
+    REMOVE $DEP_X264
     git clone https://code.videolan.org/videolan/x264.git
-    cd x264 || {
-        echo "cd failed, aborting at installLibx264:02"
-        exit 1
-    }
-    ./configure --prefix=$PREFIX --enable-static --enable-pic
+    cd x264
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
     make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~ || {
-        echo "cd failed, aborting at installLibx264:03"
-        exit 1
-    }
+    cd ~
+}
+
+# Install Libx265
+installLibx265() {
+    cd ~
+    echo
+    echo " ---------------------------------------------------------"
+    echo " |                                                       |"
+    echo " |              Building/Installing libx265              |"
+    echo " |                                                       |"
+    echo " ---------------------------------------------------------"
+    echo
+
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_X265
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_X265
+            return
+        fi
+    fi
+
+
+    REMOVE $DEP_X265
+    git clone https://bitbucket.org/multicoreware/x265_git.git
+    cd x265_git/build/linux
+    cmake -G "Unix Makefiles" -DLIB_INSTALL_DIR="$PREFIX/lib" -DENABLE_SHARED=on -DENABLE_PIC=on ../../source
+    checkForError
+    make -j"$JOBS"
+    checkForError
+    sudo make install
+    checkForError
+    sudo ldconfig
+    cd ~
 }
 
 # Install Libfdk
 installLibfdk() {
-    cd ~ || {
-        echo "cd failed, aborting at installLibfdk:01"
-        exit 1
-    }
+    cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -194,38 +248,97 @@ installLibfdk() {
     echo " ---------------------------------------------------------"
     echo
 
-    CHECK libfdk-aac-dev
-    if [[ $? = 0 ]]; then
-        INSTALL libfdk-aac-dev
-        return
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_AAC
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_AAC
+            return
+        fi
     fi
 
-    REMOVE libfdk-aac-dev
+    REMOVE $DEP_AAC
     git clone https://github.com/mstorsjo/fdk-aac.git
-    cd fdk-aac || {
-        echo "cd failed, aborting at installLibfdk:02"
-        exit 1
-    }
+    cd fdk-aac
     ./autogen.sh
-    ./configure --prefix=$PREFIX --enable-static --disable-shared
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
     make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~ || {
-        echo "cd failed, aborting at installLibfdk:03"
-        exit 1
-    }
+    cd ~
+}
+
+# Install VPX
+installLibvpx() {
+    cd ~
+    echo
+    echo " ---------------------------------------------------------"
+    echo " |                                                       |"
+    echo " |            Building/Installing libvpx-dev             |"
+    echo " |                                                       |"
+    echo " ---------------------------------------------------------"
+    echo
+
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_VPX
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_VPX
+            return
+        fi
+    fi
+
+    REMOVE $DEP_VPX
+    git clone https://chromium.googlesource.com/webm/libvpx.git
+    cd libvpx
+    ./autogen.sh
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm
+    checkForError
+    make -j"$JOBS"
+    checkForError
+    sudo make install
+    checkForError
+    sudo ldconfig
+    cd ~
+}
+
+# Install VPX
+installLibopus() {
+    cd ~
+    echo
+    echo " ---------------------------------------------------------"
+    echo " |                                                       |"
+    echo " |            Building/Installing libopus-dev            |"
+    echo " |                                                       |"
+    echo " ---------------------------------------------------------"
+    echo
+
+    if [[ $FORCE_BUILD = false ]]; then
+        CHECK $DEP_OPUS
+        if [[ $? = 0 ]]; then
+            INSTALL $DEP_OPUS
+            return
+        fi
+    fi
+
+    REMOVE $DEP_OPUS
+    git clone https://github.com/xiph/opus.git
+    cd opus
+    ./autogen.sh
+    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
+    checkForError
+    make -j"$JOBS"
+    checkForError
+    sudo make install
+    checkForError
+    sudo ldconfig
+    cd ~
 }
 
 # Install FFmpeg
 installFFmpeg() {
-    cd ~ || {
-        echo "cd failed, aborting at installFFmpeg:01"
-        exit 1
-    }
+    cd ~
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -237,37 +350,43 @@ installFFmpeg() {
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
-    cd ffmpeg || {
-        echo "cd failed, aborting at installFFmpeg:02"
-        exit 1
-    }
+    cd ffmpeg
+    
 
-    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --enable-hardcoded-tables --disable-ffprobe --disable-ffplay --enable-libx264"
+    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared"
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
     fi
 
-    if [[ "$OMX" = "y" ]]; then
-        CMD="$CMD --enable-mmal"
-        CMD="$CMD --enable-omx"
-        CMD="$CMD --enable-omx-rpi"
+    if [[ "$L264" = "y" ]]; then
+        CMD="$CMD --enable-libx264"
+    fi
+
+    if [[ "$L265" = "y" ]]; then
+        CMD="$CMD --enable-libx265"
+    fi
+
+    if [[ "$LVPX" = "y" ]]; then
+        CMD="$CMD --enable-libvpx"
+    fi
+
+    if [[ "$LOPUS" = "y" ]]; then
+        CMD="$CMD --enable-libopus"
     fi
 
     if [[ "$FLAGSYN" = "y" ]]; then
         CMD="$CMD $FLAGS"
     fi
 
-    ./configure $CMD
+    ./configure $CMD --extra-libs="-lpthread -lm"
     checkForError
     make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
-    cd ~ || {
-        echo "cd failed, aborting at installFFmpeg:03"
-        exit 1
-    }
+    sudo ldconfig
+    cd ~
 }
 
 # Clear Up
@@ -275,75 +394,55 @@ cleanDirectory() {
     rm -rf ffmpeg
     rm -rf fdk-aac
     rm -rf x264
+    rm -rf x265_git
+    rm -rf libvpx
+    rm -rf opus
     rm -f ffmpeg-snapshot.tar.bz2
 }
 
 # Ask for Threads
 getJobsCount() {
 
-    if [[ $JOBSPARAM = true || "$INTERACTIVE" = "n" ]]; then
+    if [[ $JOBS_PARAM = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
 
     echo
-    echo "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed)${End}"
-    echo
-    echo "   The more you specify - the higher chance of CPU throttling and memory constraints"
-    printf "   we recommend no more than 3 for a Pi 4 (1-4): "
+    printf "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) Default: $JOBS (#):${End}"
     read -r
-    if [[ $REPLY -lt 5 && $REPLY -gt 0 ]]; then
+    if [[ $REPLY -gt 0 ]]; then
         JOBS=$REPLY
     fi
 }
 
-# Ask for omx
-getOMX() {
+# getLib L264_PARAM L264 "libx264"
+getLib(){
 
-    if [[ $OMXPARAM = true || "$INTERACTIVE" = "n" ]]; then
+   
+    if [[ ${!1} = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
 
-    echo
-    echo "   ${Yellow}Would you like to enable 'h264_omx'?${End}"
-    echo
-    echo "   Note: 'h264_omx' is deprecated and should not be used on new installs."
-    printf "   If you already use it, choose yes here. Enter (y/n): "
+    printf "   ${Yellow}Would you like to enable '$3'? Default: ${!2} (y/n):${End}"
     read -r
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
-        OMX="$REPLY"
-    fi
-}
-
-# Ask for FDK
-getFDK() {
-
-    if [[ $FDKPARAM = true || "$INTERACTIVE" = "n" ]]; then
-        return
+        eval $2="$REPLY"
     fi
 
-    echo
-    echo "   ${Yellow}Would you like to enable 'libfdk-aac'?${End}"
-    echo
-    echo "   Note: 'libfdk-aac' is needed for HomeKit audio. We recommend enabling libfdk-aac."
-    printf "   If you are running Option 4, you can enable this lib. Enter (y/n): "
-    read -r
-    if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
-        FDK="$REPLY"
-    fi
 }
 
 # Get Compile Flags
 getFlags() {
 
-    if [[ $FLAGSPARAM = true || "$INTERACTIVE" = "n" ]]; then
+    if [[ $FLAGS_PARAM = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
 
     echo
-    echo "   ${Yellow}Would you like to add any extra FFmpeg compile flags?"
+    echo "   ${Yellow}Would you like to add any extra FFmpeg compile flags? Default: $FLAGSYN (y/n)"
     echo
-    echo "   ADVANCED: ${End}Compile flags could be added to enable libx265 or the countless others"
-    printf "   You are responsible for ensuring any required parts are installed (y/n): "
+    echo "   ADVANCED: ${End}Compile flags could be added to the build process, to ensure ffmpeg is compiled with more features."
+    printf "   You are responsible for ensuring any requied dev/header files are installed: "
     read -r
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
         FLAGSYN="$REPLY"
@@ -351,7 +450,7 @@ getFlags() {
             echo
             echo "   ${Yellow}Please enter your compile flags below, separated by a space${End}"
             echo
-            printf "   Example '--enable-libx265 --enable-libopus' : "
+            printf "   Example: --enable-vaapi --enable-libvorbis : "
             read -r
             if [[ ${#REPLY} -gt 0 ]]; then
                 FLAGS="$REPLY"
@@ -389,7 +488,6 @@ processOptions() {
     case $1 in
 
     1)
-        getJobsCount
         stopWatch "start"
         installDependencies
         stopWatch "stop"
@@ -416,11 +514,8 @@ processOptions() {
 
     3)
         getJobsCount
-        getOMX
-        getFDK
-        getFlags
         stopWatch "start"
-        installFFmpeg
+        installLibx264
         stopWatch "stop"
         if [ "$INTERACTIVE" = "y" ]; then
             echo "   ${Yellow}All Done!${End} ...press enter"
@@ -429,20 +524,10 @@ processOptions() {
             menu
         fi
         ;;
-
     4)
-        cleanDirectory
         getJobsCount
-        getOMX
-        getFDK
-        getFlags
         stopWatch "start"
-        installDependencies
-        if [[ "$FDK" = "y" ]]; then
-            installLibfdk
-        fi
-        installFFmpeg
-        cleanDirectory
+        installLibx265
         stopWatch "stop"
         if [ "$INTERACTIVE" = "y" ]; then
             echo "   ${Yellow}All Done!${End} ...press enter"
@@ -453,6 +538,81 @@ processOptions() {
         ;;
 
     5)
+        getJobsCount
+        stopWatch "start"
+        installLibvpx
+        stopWatch "stop"
+        if [ "$INTERACTIVE" = "y" ]; then
+            echo "   ${Yellow}All Done!${End} ...press enter"
+            read -r
+            printHeader
+            menu
+        fi
+        ;;
+
+    6)
+        getJobsCount
+        stopWatch "start"
+        installLibopus
+        stopWatch "stop"
+        if [ "$INTERACTIVE" = "y" ]; then
+            echo "   ${Yellow}All Done!${End} ...press enter"
+            read -r
+            printHeader
+            menu
+        fi
+        ;;
+
+    7)
+        getJobsCount
+        stopWatch "start"
+        installFFmpeg
+        stopWatch "stop"
+        if [ "$INTERACTIVE" = "y" ]; then
+            echo "   ${Yellow}All Done!${End} ...press enter"
+            read -r
+            printHeader
+            menu
+        fi
+        ;;
+
+    8)
+        getJobsCount
+        getLib FDK_PARAM FDK "libfdk-aac"
+        getLib L264_PARAM L264 "libx264"
+        getLib L265_PARAM L265 "libx265"
+        getLib LVPX_PARAM LVPX "libvpx"
+        getLib LOPUS_PARAM LOPUS "libopus"
+        getFlags
+        stopWatch "start"
+        installDependencies
+        if [[ "$FDK" = "y" ]]; then
+            installLibfdk
+        fi
+        if [[ "$L264" = "y" ]]; then
+            installLibx264
+        fi
+        if [[ "$L265" = "y" ]]; then
+            installLibx265
+        fi
+        if [[ "$LVPX" = "y" ]]; then
+            installLibvpx
+        fi
+        if [[ "$LOPUS" = "y" ]]; then
+            installLibopus
+        fi
+        installFFmpeg
+        cleanDirectory
+        stopWatch "stop"
+        if [ "$INTERACTIVE" = "y" ]; then
+            echo "   ${Yellow}All Done!${End} ...press enter"
+            read -r
+            printHeader
+            menu
+        fi
+        ;;
+
+    9)
         stopWatch "start"
         cleanDirectory
         stopWatch "stop"
@@ -467,52 +627,67 @@ processOptions() {
 }
 
 # Entry Point
-cd ~ || {
-    echo "cd failed, aborting"
-    exit 1
-}
+cd ~
 
 while [ $# -gt 0 ]; do
 
     case "$1" in
 
-    --help | -h)
+    --help)
+        printf "\033c"
         echo "Options:"
         echo
-        echo " --interactive -i    [y|n]             Default: y        Disables interactive mode"
-        echo " --mode        -m    [1|2|3|4|5]                         Sets the mode (requires --interactive 0, ignored otherwise)"
-        echo " --max-jobs    -j    [#]               Default: 3        Set maximum number of builds jobs"
-        echo " --libfdk-aac  -a    [y|n]             Default: y        Compile/enable libfdk-aac"
-        echo " --h264-omx    -x    [y|n]             Default: n        Enable h264-omx"
-        echo " --extra-flags -f    [\"--*-* --*-*\"]   Default: empty    Provides compile flags for ffmpeg"
-        echo
-        echo " Example: ./build-debian.sh --interactive n --max-jobs 2 --mode 4"
+        echo " --force-build                              : Forces the build of required libs, regaldess of their availability with the systems repository sources"
+        echo " --none-interactive                         : Disables interactive mode"
+        echo " --mode               [1-9]                 : Sets the operation. Requies --none-interactive"
+        echo " --max-jobs           [1-#] Default: 3      : Sets the number of build threads"
+        echo " --libfdk-aac         [y:n] Default: y      : Enable/Disable this lib"
+        echo " --libx264            [y:n] Default: y      : Enable/Disable this lib"
+        echo " --libx265            [y:n] Default: n      : Enable/Disable this lib"
+        echo " --libopus            [y:n] Default: n      : Enable/Disable this lib"
+        echo " --libvpx             [y:n] Default: n      : Enable/Disable this lib"
+        echo " --extra-flags        [*]   Default: None   : Adds extra build args to the ffmpeg build"
         echo
         exit 0
         ;;
-    --interactive | -i)
-        INTERACTIVE="$2"
+    --force-build)
+        FORCE_BUILD=true
         ;;
-    --mode | -m)
+    --none-interactive)
+        INTERACTIVE="n"
+        ;;
+    --mode)
         MODE=$2
-        MODEPARAM=true
+        MODE_PARAM=true
         ;;
-    --max-jobs | -j)
+    --max-jobs)
         JOBS=$2
-        JOBSPARAM=true
+        JOBS_PARAM=true
         ;;
-    --h264-omx | -x)
-        OMX="$2"
-        OMXPARAM=true
-        ;;
-    --libfdk-aac | -a)
+    --libfdk-aac)
         FDK="$2"
-        FDKPARAM=true
+        FDK_PARAM=true
         ;;
-    --extra-flags | -f)
+    --libx264)
+        L264="$2"
+        L264_PARAM=true
+        ;;
+    --libx265)
+        L265="$2"
+        L265_PARAM=true
+        ;;
+    --libopus)
+        LOPUS="$2"
+        LOPUS_PARAM=true
+        ;;
+    --libvpx)
+        LVPX="$2"
+        LVPX_PARAM=true
+        ;;
+    --extra-flags)
         FLAGSYN="y"
         FLAGS="$2"
-        FLAGSPARAM=true
+        FLAGS_PARAM=true
         ;;
     esac
     shift
