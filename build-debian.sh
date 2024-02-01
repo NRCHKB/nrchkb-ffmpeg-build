@@ -420,7 +420,7 @@ installFFmpeg() {
 
     checkForError
 
-    CMD="-j\"$JOBS\""
+    CMD="-j$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
         CMD="$CMD -s"
