@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# nrchkb-ffmpeg-build Version 2.0
+# nrchkb-ffmpeg-build Version 2.1
+
+# Copyright (c) 2022-2024 Marcus Davies
+# Copyright (c) 2022-2024 Garrett Porter
 
 # MIT License
-
-# Copyright (c) 2022 Marcus Davies
-# Copyright (c) 2022 Garrett Porter
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ LOPUS="n"        # Opus Choice Value
 LOPUS_PARAM=false # Arg provided
 
 FLAGSYN="n"      # Flags Choice Value
-FLAGS=""         # Flasg Value
+FLAGS=""         # Flags Value
 FLAGS_PARAM=false # Arg provided
 
 MODE=0           # Mode Value
@@ -66,16 +66,16 @@ export CFLAGS="-I$PREFIX/include"
 # Ignore Repository sources
 FORCE_BUILD=false
 
-# Specific package manager implemention
+# Specific package manager implementation
 INSTALL() {
     sudo apt install -y $@
 }
 REMOVE() {
-    sudo apt remove -y $1
-    sudo apt purge -y $1
+    sudo apt remove -y "$1"
+    sudo apt purge -y "$1"
 }
 CHECK() {
-    apt info $1
+    apt info "$1"
 }
 
 # Package Names
@@ -91,7 +91,7 @@ printHeader() {
     printf "\033c"
     echo
     echo " ---------------------------------------------------------"
-    echo " |                                                   2.0 |"
+    echo " |                                                   2.1 |"
     echo " |          P&M FFmpeg Build Script (Debian)             |"
     echo " |   An FFmpeg build & installation utility for NRCHKB   |"
     echo " |                                                       |"
@@ -120,8 +120,8 @@ menu() {
     echo
     echo "   Note: This script will download and compile these software packages from source code,"
     echo "         unless they happen to be available from your systems repository."
-    echo "         Where necessary, libaries will be built as shared libs."
-    echo 
+    echo "         Where necessary, libraries will be built as shared libs."
+    echo
     echo "         This excludes FFMPEG which will always be built for source."
     echo
     echo "         If you have previously run this script, running it again will update your software."
@@ -138,7 +138,7 @@ menu() {
         printHeader
         menu
     fi
-    processOptions $MODE
+    processOptions "$MODE"
 }
 
 # Error Check
@@ -173,7 +173,7 @@ installDependencies() {
 
 # Install Libx264
 installLibx264() {
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -193,7 +193,7 @@ installLibx264() {
 
     REMOVE $DEP_X264
     git clone https://code.videolan.org/videolan/x264.git
-    cd x264
+    cd x264 || { echo "Failed to cd x264"; exit 1; }
     ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
     make -j"$JOBS"
@@ -201,12 +201,12 @@ installLibx264() {
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
 }
 
 # Install Libx265
 installLibx265() {
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -226,7 +226,7 @@ installLibx265() {
 
     REMOVE $DEP_X265
     git clone https://bitbucket.org/multicoreware/x265_git.git
-    cd x265_git/build/linux
+    cd x265_git/build/linux || { echo "Failed to cd x265_git/build/linux"; exit 1; }
     cmake -G "Unix Makefiles" -DLIB_INSTALL_DIR="$PREFIX/lib" -DENABLE_SHARED=on -DENABLE_PIC=on ../../source
     checkForError
     make -j"$JOBS"
@@ -234,12 +234,12 @@ installLibx265() {
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
 }
 
 # Install Libfdk
 installLibfdk() {
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -258,7 +258,7 @@ installLibfdk() {
 
     REMOVE $DEP_AAC
     git clone https://github.com/mstorsjo/fdk-aac.git
-    cd fdk-aac
+    cd fdk-aac || { echo "Failed to cd fdk-aac"; exit 1; }
     ./autogen.sh
     ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
@@ -267,12 +267,12 @@ installLibfdk() {
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
 }
 
 # Install VPX
 installLibvpx() {
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -291,7 +291,7 @@ installLibvpx() {
 
     REMOVE $DEP_VPX
     git clone https://chromium.googlesource.com/webm/libvpx.git
-    cd libvpx
+    cd libvpx || { echo "Failed to cd libvpx"; exit 1; }
     ./autogen.sh
     ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm
     checkForError
@@ -300,12 +300,12 @@ installLibvpx() {
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
 }
 
 # Install VPX
 installLibopus() {
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -324,7 +324,7 @@ installLibopus() {
 
     REMOVE $DEP_OPUS
     git clone https://github.com/xiph/opus.git
-    cd opus
+    cd opus || { echo "Failed to cd opus"; exit 1; }
     ./autogen.sh
     ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
     checkForError
@@ -333,12 +333,12 @@ installLibopus() {
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
 }
 
 # Install FFmpeg
 installFFmpeg() {
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
     echo
     echo " ---------------------------------------------------------"
     echo " |                                                       |"
@@ -350,8 +350,7 @@ installFFmpeg() {
     wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     echo "Extracting source code..."
     tar xjf ffmpeg-snapshot.tar.bz2
-    cd ffmpeg
-    
+    cd ffmpeg || { echo "Failed to cd ffmpeg"; exit 1; }
 
     CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared"
 
@@ -379,14 +378,14 @@ installFFmpeg() {
         CMD="$CMD $FLAGS"
     fi
 
-    ./configure $CMD --extra-libs="-lpthread -lm"
+    ./configure "$CMD" --extra-libs="-lpthread -lm"
     checkForError
     make -j"$JOBS"
     checkForError
     sudo make install
     checkForError
     sudo ldconfig
-    cd ~
+    cd ~ || { echo "Failed to cd ~"; exit 1; }
 }
 
 # Clear Up
@@ -408,7 +407,7 @@ getJobsCount() {
     fi
 
     echo
-    printf "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) Default: $JOBS (#):${End}"
+    printf "   ${Yellow}How many simultaneous jobs would you like to use for build processes (if needed) Default: %s (#):${End}" "$JOBS"
     read -r
     if [[ $REPLY -gt 0 ]]; then
         JOBS=$REPLY
@@ -418,15 +417,15 @@ getJobsCount() {
 # getLib L264_PARAM L264 "libx264"
 getLib(){
 
-   
+
     if [[ ${!1} = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
 
-    printf "   ${Yellow}Would you like to enable '$3'? Default: ${!2} (y/n):${End}"
+    printf "   ${Yellow}Would you like to enable '%s'? Default: %s (y/n):${End}" "$3" "${!2}"
     read -r
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
-        eval $2="$REPLY"
+        eval "$2"="$REPLY"
     fi
 
 }
@@ -442,7 +441,7 @@ getFlags() {
     echo "   ${Yellow}Would you like to add any extra FFmpeg compile flags? Default: $FLAGSYN (y/n)"
     echo
     echo "   ADVANCED: ${End}Compile flags could be added to the build process, to ensure ffmpeg is compiled with more features."
-    printf "   You are responsible for ensuring any requied dev/header files are installed: "
+    printf "   You are responsible for ensuring any required dev/header files are installed: "
     read -r
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
         FLAGSYN="$REPLY"
@@ -627,7 +626,7 @@ processOptions() {
 }
 
 # Entry Point
-cd ~
+cd ~ || { echo "Failed to cd ~"; exit 1; }
 
 while [ $# -gt 0 ]; do
 
@@ -637,16 +636,17 @@ while [ $# -gt 0 ]; do
         printf "\033c"
         echo "Options:"
         echo
-        echo " --force-build                              : Forces the build of required libs, regaldess of their availability with the systems repository sources"
-        echo " --none-interactive                         : Disables interactive mode"
-        echo " --mode               [1-9]                 : Sets the operation. Requies --none-interactive"
-        echo " --max-jobs           [1-#] Default: 3      : Sets the number of build threads"
-        echo " --libfdk-aac         [y:n] Default: y      : Enable/Disable this lib"
-        echo " --libx264            [y:n] Default: y      : Enable/Disable this lib"
-        echo " --libx265            [y:n] Default: n      : Enable/Disable this lib"
-        echo " --libopus            [y:n] Default: n      : Enable/Disable this lib"
-        echo " --libvpx             [y:n] Default: n      : Enable/Disable this lib"
-        echo " --extra-flags        [*]   Default: None   : Adds extra build args to the ffmpeg build"
+        echo " --force-build                                  : Forces the build of required libs, regardless of their availability with the systems repository sources"
+        echo " --none-interactive                             : Disables interactive mode"
+        echo " --mode               [1-9]                     : Sets the operation. Requires --none-interactive"
+        echo " --max-jobs           [1-#] Default: 3          : Sets the number of build threads"
+        echo " --libfdk-aac         [y:n] Default: y          : Enable/Disable this lib"
+        echo " --libx264            [y:n] Default: y          : Enable/Disable this lib"
+        echo " --libx265            [y:n] Default: n          : Enable/Disable this lib"
+        echo " --libopus            [y:n] Default: n          : Enable/Disable this lib"
+        echo " --libvpx             [y:n] Default: n          : Enable/Disable this lib"
+        echo " --extra-flags        [*]   Default: None       : Adds extra build args to the ffmpeg build"
+        echo " --path               [*]   Default: /usr/local : Set custom install path"
         echo
         exit 0
         ;;
@@ -689,13 +689,18 @@ while [ $# -gt 0 ]; do
         FLAGS="$2"
         FLAGS_PARAM=true
         ;;
+    --path)
+        PREFIX="$2"
+        export LDFLAGS="-L$PREFIX/lib"
+        export CFLAGS="-I$PREFIX/include"
+        ;;
     esac
     shift
 done
 
 if [ "$INTERACTIVE" = "n" ]; then
     printHeader
-    processOptions $MODE
+    processOptions "$MODE"
 
 else
     printHeader
