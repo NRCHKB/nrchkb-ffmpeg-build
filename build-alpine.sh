@@ -418,7 +418,15 @@ installFFmpeg() {
     ./configure "$CMD"
 
     checkForError
-    make -j"$JOBS"
+
+    CMD="-j\"$JOBS\""
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD -s"
+    fi
+
+    make "$CMD"
+
     checkForError
     make install
     checkForError
