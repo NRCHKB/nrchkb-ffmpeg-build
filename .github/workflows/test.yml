@@ -12,11 +12,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        max-jobs: [4, 4]
-        mode: [8, 8]
-        libx265: [y, y]
-        libopus: [y, y]
-        libvpx: [y, y]
+        max-jobs: [4]
+        mode: [8]
+        libx265: [y]
+        libopus: [y]
+        libvpx: [y]
 
     runs-on: ${{ matrix.os }}
     steps:
