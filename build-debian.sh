@@ -58,6 +58,8 @@ MODE_PARAM=false  # Arg provided
 
 INTERACTIVE="y"  # Interactive
 
+QUIET_BUILD=false # Quiet build
+
 # Prefix
 PREFIX="/usr/local"
 export LDFLAGS="-L$PREFIX/lib"
@@ -194,7 +196,15 @@ installLibx264() {
     REMOVE $DEP_X264
     git clone https://code.videolan.org/videolan/x264.git
     cd x264 || { echo "Failed to cd x264"; exit 1; }
-    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
+
+    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD --quiet"
+    fi
+
+    ./configure "$CMD"
+
     checkForError
     make -j"$JOBS"
     checkForError
@@ -260,7 +270,15 @@ installLibfdk() {
     git clone https://github.com/mstorsjo/fdk-aac.git
     cd fdk-aac || { echo "Failed to cd fdk-aac"; exit 1; }
     ./autogen.sh
-    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
+
+    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD --quiet"
+    fi
+
+    ./configure "$CMD"
+
     checkForError
     make -j"$JOBS"
     checkForError
@@ -293,7 +311,15 @@ installLibvpx() {
     git clone https://chromium.googlesource.com/webm/libvpx.git
     cd libvpx || { echo "Failed to cd libvpx"; exit 1; }
     ./autogen.sh
-    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm
+
+    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD --quiet"
+    fi
+
+    ./configure "$CMD"
+
     checkForError
     make -j"$JOBS"
     checkForError
@@ -326,7 +352,15 @@ installLibopus() {
     git clone https://github.com/xiph/opus.git
     cd opus || { echo "Failed to cd opus"; exit 1; }
     ./autogen.sh
-    ./configure --prefix=$PREFIX --disable-static --enable-shared --enable-pic
+
+    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD --quiet"
+    fi
+
+    ./configure "$CMD"
+
     checkForError
     make -j"$JOBS"
     checkForError
@@ -352,7 +386,7 @@ installFFmpeg() {
     tar xjf ffmpeg-snapshot.tar.bz2
     cd ffmpeg || { echo "Failed to cd ffmpeg"; exit 1; }
 
-    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared"
+    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs=\"-lpthread -lm\""
 
     if [[ "$FDK" = "y" ]]; then
         CMD="$CMD --enable-libfdk-aac"
@@ -378,7 +412,12 @@ installFFmpeg() {
         CMD="$CMD $FLAGS"
     fi
 
-    ./configure "$CMD" --extra-libs="-lpthread -lm"
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD --quiet"
+    fi
+
+    ./configure "$CMD"
+
     checkForError
     make -j"$JOBS"
     checkForError
@@ -647,6 +686,7 @@ while [ $# -gt 0 ]; do
         echo " --libvpx             [y:n] Default: n          : Enable/Disable this lib"
         echo " --extra-flags        [*]   Default: None       : Adds extra build args to the ffmpeg build"
         echo " --path               [*]   Default: /usr/local : Set custom install path"
+        echo " --quiet                                        : Enable quite build mode"
         echo
         exit 0
         ;;
@@ -693,6 +733,9 @@ while [ $# -gt 0 ]; do
         PREFIX="$2"
         export LDFLAGS="-L$PREFIX/lib"
         export CFLAGS="-I$PREFIX/include"
+        ;;
+    --quiet)
+        QUIET_BUILD=true
         ;;
     esac
     shift

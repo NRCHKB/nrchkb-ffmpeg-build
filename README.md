@@ -41,10 +41,10 @@ Tested Environments
 
 Copy the below and paste it in your terminal.
 
-Note: If your OS is Alpine, install `curl` and `bash` first.
+Note: If your OS is Alpine, install `curl`, `bash`, `make`, `cmake` and `g++` first.
 
 ```bash
-apk add curl bash
+apk add curl bash make cmake g++
 ```
 
 Then
