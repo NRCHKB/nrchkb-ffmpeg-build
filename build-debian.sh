@@ -206,7 +206,15 @@ installLibx264() {
     ./configure "$CMD"
 
     checkForError
-    make -j"$JOBS"
+
+    CMD="-j$JOBS"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD -s"
+    fi
+
+    make "$CMD"
+
     checkForError
     sudo make install
     checkForError
@@ -239,7 +247,15 @@ installLibx265() {
     cd x265_git/build/linux || { echo "Failed to cd x265_git/build/linux"; exit 1; }
     cmake -G "Unix Makefiles" -DLIB_INSTALL_DIR="$PREFIX/lib" -DENABLE_SHARED=on -DENABLE_PIC=on ../../source
     checkForError
-    make -j"$JOBS"
+
+    CMD="-j$JOBS"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD -s"
+    fi
+
+    make "$CMD"
+
     checkForError
     sudo make install
     checkForError
@@ -280,7 +296,15 @@ installLibfdk() {
     ./configure "$CMD"
 
     checkForError
-    make -j"$JOBS"
+
+    CMD="-j$JOBS"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD -s"
+    fi
+
+    make "$CMD"
+
     checkForError
     sudo make install
     checkForError
@@ -321,7 +345,15 @@ installLibvpx() {
     ./configure "$CMD"
 
     checkForError
-    make -j"$JOBS"
+
+    CMD="-j$JOBS"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD -s"
+    fi
+
+    make "$CMD"
+
     checkForError
     sudo make install
     checkForError
@@ -362,7 +394,15 @@ installLibopus() {
     ./configure "$CMD"
 
     checkForError
-    make -j"$JOBS"
+
+    CMD="-j$JOBS"
+
+    if [[ $QUIET_BUILD = true ]]; then
+        CMD="$CMD -s"
+    fi
+
+    make "$CMD"
+
     checkForError
     sudo make install
     checkForError
