@@ -207,10 +207,10 @@ installLibx264() {
 
     checkForError
 
-    CMD="-j $JOBS"
+    CMD="--jobs=$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD -s"
+        CMD="$CMD --quiet"
     fi
 
     make "$CMD"
@@ -248,10 +248,10 @@ installLibx265() {
     cmake -G "Unix Makefiles" -DLIB_INSTALL_DIR="$PREFIX/lib" -DENABLE_SHARED=on -DENABLE_PIC=on ../../source
     checkForError
 
-    CMD="-j $JOBS"
+    CMD="--jobs=$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD -s"
+        CMD="$CMD --quiet"
     fi
 
     make "$CMD"
@@ -297,10 +297,10 @@ installLibfdk() {
 
     checkForError
 
-    CMD="-j $JOBS"
+    CMD="--jobs=$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD -s"
+        CMD="$CMD --quiet"
     fi
 
     make "$CMD"
@@ -346,10 +346,10 @@ installLibvpx() {
 
     checkForError
 
-    CMD="-j $JOBS"
+    CMD="--jobs=$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD -s"
+        CMD="$CMD --quiet"
     fi
 
     make "$CMD"
@@ -395,10 +395,10 @@ installLibopus() {
 
     checkForError
 
-    CMD="-j $JOBS"
+    CMD="--jobs=$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD -s"
+        CMD="$CMD --quiet"
     fi
 
     make "$CMD"
@@ -460,10 +460,10 @@ installFFmpeg() {
 
     checkForError
 
-    CMD="-j $JOBS"
+    CMD="--jobs=$JOBS"
 
     if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD -s"
+        CMD="$CMD --quiet"
     fi
 
     make "$CMD"
