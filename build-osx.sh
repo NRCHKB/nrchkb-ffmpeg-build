@@ -88,7 +88,6 @@ DEP_AAC="fdk-aac"
 
 # Print Header
 printHeader() {
-
     printf "\033c"
     echo
     echo " ---------------------------------------------------------"
@@ -100,12 +99,10 @@ printHeader() {
     echo
     echo " ${Yellow}Note: This script will install into $PREFIX/bin and $PREFIX/lib respectively.${End}"
     echo
-
 }
 
 # Print menu
 menu() {
-
     echo " ${Yellow}What would you like to do:${End}"
     echo
     echo "   1 - Install build tools (Dependencies from apt)"
@@ -169,7 +166,6 @@ installDependencies() {
     echo " ---------------------------------------------------------"
     echo
     INSTALL pkg-config autoconf automake libtool git wget make gcc nasm yasm cmake
-
 }
 
 # Install Libx264
@@ -191,31 +187,21 @@ installLibx264() {
         fi
     fi
 
-
     REMOVE $DEP_X264
     git clone https://code.videolan.org/videolan/x264.git
     cd x264 || { echo "Failed to cd x264"; exit 1; }
 
-    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    ./configure "$CMD"
-
+    CMD=(--prefix="$PREFIX" --disable-static --enable-shared --enable-pic)
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    ./configure "${CMD[@]}"
     checkForError
 
-    CMD="--jobs=$JOBS"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    make "$CMD"
-
+    CMD=(--jobs "$JOBS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    make "${CMD[@]}"
     checkForError
-    sudo sudo make install
+
+    sudo make install
     checkForError
     sudo ldconfig
     cd ~ || { echo "Failed to cd ~"; exit 1; }
@@ -240,22 +226,17 @@ installLibx265() {
         fi
     fi
 
-
     REMOVE $DEP_X265
     git clone https://bitbucket.org/multicoreware/x265_git.git
     cd x265_git/build/linux || { echo "Failed to cd x265_git/build/linux"; exit 1; }
     cmake -G "Unix Makefiles" -DLIB_INSTALL_DIR="$PREFIX/lib" -DENABLE_SHARED=on -DENABLE_PIC=on ../../source
     checkForError
 
-    CMD="--jobs=$JOBS"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    make "$CMD"
-
+    CMD=(--jobs "$JOBS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    make "${CMD[@]}"
     checkForError
+
     sudo make install
     checkForError
     sudo ldconfig
@@ -286,25 +267,16 @@ installLibfdk() {
     cd fdk-aac || { echo "Failed to cd fdk-aac"; exit 1; }
     ./autogen.sh
 
-    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    ./configure "$CMD"
-
+    CMD=(--prefix="$PREFIX" --disable-static --enable-shared --enable-pic)
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    ./configure "${CMD[@]}"
     checkForError
 
-    CMD="--jobs=$JOBS"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    make "$CMD"
-
+    CMD=(--jobs "$JOBS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    make "${CMD[@]}"
     checkForError
+
     sudo make install
     checkForError
     sudo ldconfig
@@ -335,25 +307,16 @@ installLibvpx() {
     cd libvpx || { echo "Failed to cd libvpx"; exit 1; }
     ./autogen.sh
 
-    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    ./configure "$CMD"
-
+    CMD=(--prefix="$PREFIX" --disable-static --enable-shared --enable-pic --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm)
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    ./configure "${CMD[@]}"
     checkForError
 
-    CMD="--jobs=$JOBS"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    make "$CMD"
-
+    CMD=(--jobs "$JOBS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    make "${CMD[@]}"
     checkForError
+
     sudo make install
     checkForError
     sudo ldconfig
@@ -384,25 +347,16 @@ installLibopus() {
     cd opus || { echo "Failed to cd opus"; exit 1; }
     ./autogen.sh
 
-    CMD="--prefix=$PREFIX --disable-static --enable-shared --enable-pic"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    ./configure "$CMD"
-
+    CMD=(--prefix="$PREFIX" --disable-static --enable-shared --enable-pic)
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    ./configure "${CMD[@]}"
     checkForError
 
-    CMD="--jobs=$JOBS"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    make "$CMD"
-
+    CMD=(--jobs "$JOBS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    make "${CMD[@]}"
     checkForError
+
     sudo make install
     checkForError
     sudo ldconfig
@@ -425,49 +379,22 @@ installFFmpeg() {
     tar xjf ffmpeg-snapshot.tar.bz2
     cd ffmpeg || { echo "Failed to cd ffmpeg"; exit 1; }
 
-    CMD="--prefix=$PREFIX --enable-nonfree --enable-gpl --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs=\"-lpthread -lm\""
-
-    if [[ "$FDK" = "y" ]]; then
-        CMD="$CMD --enable-libfdk-aac"
-    fi
-
-    if [[ "$L264" = "y" ]]; then
-        CMD="$CMD --enable-libx264"
-    fi
-
-    if [[ "$L265" = "y" ]]; then
-        CMD="$CMD --enable-libx265"
-    fi
-
-    if [[ "$LVPX" = "y" ]]; then
-        CMD="$CMD --enable-libvpx"
-    fi
-
-    if [[ "$LOPUS" = "y" ]]; then
-        CMD="$CMD --enable-libopus"
-    fi
-
-    if [[ "$FLAGSYN" = "y" ]]; then
-        CMD="$CMD $FLAGS"
-    fi
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    ./configure "$CMD"
-
+    CMD=(--prefix="$PREFIX" --enable-nonfree --enable-gpl --disable-ffprobe --disable-ffplay --enable-pic --disable-static --enable-shared --extra-libs="-lpthread -lm")
+    [[ "$FDK" = "y" ]] && CMD=("${CMD[@]}" --enable-libfdk-aac)
+    [[ "$L264" = "y" ]] && CMD=("${CMD[@]}" --enable-libx264)
+    [[ "$L265" = "y" ]] && CMD=("${CMD[@]}" --enable-libx265)
+    [[ "$LVPX" = "y" ]] && CMD=("${CMD[@]}" --enable-libvpx)
+    [[ "$LOPUS" = "y" ]] && CMD=("${CMD[@]}" --enable-libopus)
+    [[ "$FLAGSYN" = "y" ]] && CMD=("${CMD[@]} $FLAGS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    ./configure "${CMD[@]}"
     checkForError
 
-    CMD="--jobs=$JOBS"
-
-    if [[ $QUIET_BUILD = true ]]; then
-        CMD="$CMD --quiet"
-    fi
-
-    make "$CMD"
-
+    CMD=(--jobs "$JOBS")
+    [[ $QUIET_BUILD = true ]] && CMD=("${CMD[@]}" --quiet)
+    make "${CMD[@]}"
     checkForError
+
     sudo make install
     checkForError
     sudo ldconfig
@@ -487,7 +414,6 @@ cleanDirectory() {
 
 # Ask for Threads
 getJobsCount() {
-
     if [[ $JOBS_PARAM = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
@@ -502,8 +428,6 @@ getJobsCount() {
 
 # getLib L264_PARAM L264 "libx264"
 getLib(){
-
-
     if [[ ${!1} = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
@@ -513,12 +437,10 @@ getLib(){
     if [[ "$REPLY" = "y" || "$REPLY" = "n" ]]; then
         eval "$2"="$REPLY"
     fi
-
 }
 
 # Get Compile Flags
 getFlags() {
-
     if [[ $FLAGS_PARAM = true || "$INTERACTIVE" = "n" ]]; then
         return
     fi
@@ -542,10 +464,8 @@ getFlags() {
             else
                 FLAGSYN="n"
             fi
-
         fi
     fi
-
 }
 
 # Performance Stop Watch
@@ -569,9 +489,7 @@ stopWatch() {
 
 # Command Processor
 processOptions() {
-
     case $1 in
-
     1)
         stopWatch "start"
         installDependencies
@@ -583,7 +501,6 @@ processOptions() {
             menu
         fi
         ;;
-
     2)
         getJobsCount
         stopWatch "start"
@@ -596,7 +513,6 @@ processOptions() {
             menu
         fi
         ;;
-
     3)
         getJobsCount
         stopWatch "start"
@@ -621,7 +537,6 @@ processOptions() {
             menu
         fi
         ;;
-
     5)
         getJobsCount
         stopWatch "start"
@@ -634,7 +549,6 @@ processOptions() {
             menu
         fi
         ;;
-
     6)
         getJobsCount
         stopWatch "start"
@@ -647,7 +561,6 @@ processOptions() {
             menu
         fi
         ;;
-
     7)
         getJobsCount
         stopWatch "start"
@@ -660,7 +573,6 @@ processOptions() {
             menu
         fi
         ;;
-
     8)
         getJobsCount
         getLib FDK_PARAM FDK "libfdk-aac"
@@ -696,7 +608,6 @@ processOptions() {
             menu
         fi
         ;;
-
     9)
         stopWatch "start"
         cleanDirectory
@@ -715,9 +626,7 @@ processOptions() {
 cd ~ || { echo "Failed to cd ~"; exit 1; }
 
 while [ $# -gt 0 ]; do
-
     case "$1" in
-
     --help)
         printf "\033c"
         echo "Options:"
@@ -791,7 +700,6 @@ done
 if [ "$INTERACTIVE" = "n" ]; then
     printHeader
     processOptions "$MODE"
-
 else
     printHeader
     menu
