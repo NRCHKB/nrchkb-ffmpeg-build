@@ -1,6 +1,7 @@
 name: Test builds on various OS and configurations
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main]
 
