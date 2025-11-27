@@ -11,16 +11,17 @@ env:
 jobs:
   test_build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        max-jobs: [4, 4]
-        mode: [8, 8]
-        libx265: [y, y]
-        libopus: [y, y]
-        libvpx: [y, y]
+        mode: [8]
+        max-jobs: [2, 4, 6]
+        libx265: [y, n]
+        libopus: [y, n]
+        libvpx: [y, n]
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build
         run: bash build-bootstrap.sh --none-interactive --mode ${{ matrix.mode }} --max-jobs ${{ matrix.max-jobs }} --libx265 ${{ matrix.libx265 }} --libopus ${{ matrix.libopus }} --libvpx ${{ matrix.libvpx }}
